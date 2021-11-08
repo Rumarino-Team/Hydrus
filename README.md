@@ -6,9 +6,9 @@
    
 <p align="center">
      <a alt="Jetpack">
-      <img src="https://img.shields.io/badge/Jetpack-4.4.1-blue?style=plastic" /></a>
+      <img src="https://img.shields.io/badge/Jetpack-4.4.1-orange?style=plastic" /></a>
     <a  alt="ROS_version">
-      <img src="https://img.shields.io/badge/ROS%20Version-Melodic-blue?style=plastic" /></a>
+      <img src="https://img.shields.io/badge/ROS%20Version-Melodic-orange?style=plastic" /></a>
      <a  alt="Cuda">
       <img src="https://img.shields.io/badge/CUDA-10.2.89-blue?style=plastic" /></a>
      <a alt="TensorRT">
@@ -18,7 +18,7 @@
      <a alt="OpenCV">
       <img src="https://img.shields.io/badge/OpenCV-4.1.1-blue?style=plastic" /></a>
    <a href="https://github.com/badges/shields/graphs/sponsors" alt="Sponsors">
-      <img src="https://img.shields.io/badge/Sponsors-7-orange?style=plastic" /></a>
+      <img src="https://img.shields.io/badge/Sponsors-7-blueviolet?style=plastic" /></a>
     <a href="https://github.com/badges/shields/graphs/contributors" alt="Contributors">
       <img src="https://img.shields.io/github/contributors/Rumarino-Team/Hydrus?style=plastic" /></a>
     <a href="https://github.com/badges/shields/graphs/issues" alt="Contributors">
