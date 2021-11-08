@@ -18,7 +18,7 @@
      <a alt="OpenCV">
       <img src="https://img.shields.io/badge/OpenCV-4.1.1-blue?style=plastic" /></a>
    <a href="https://github.com/badges/shields/graphs/sponsors" alt="Sponsors">
-      <img src="https://img.shields.io/badge/Sponsors-7-blueviolet?style=plastic" /></a>
+      <img src="https://img.shields.io/badge/Sponsors-18-blueviolet?style=plastic" /></a>
     <a href="https://github.com/badges/shields/graphs/contributors" alt="Contributors">
       <img src="https://img.shields.io/github/contributors/Rumarino-Team/Hydrus?style=plastic" /></a>
     <a href="https://github.com/badges/shields/graphs/issues" alt="Contributors">
@@ -26,3 +26,6 @@
 </p>
 
 <p align="center">Official repository for RUMarino's AUV Hydrus.</p>
+
+ <p align="center">
+ <a href="https://ibb.co/b7gwttx"><img width="400px" src="https://i.ibb.co/mSCZppm/Sponsors-git.png" alt="Sponsors-git" border="0"></a>
