@@ -2,11 +2,13 @@
  <h1 align="center">RUMarino Hydrus</h1>
  
  <p align="center">
- <img width="100px" src="https://lh3.googleusercontent.com/proxy/eBYw5ZWPxZxSMDxYNt1bTrDfd_nuawX1vkS35vrgUgqKR57xjhQVWFIN7cLnJFfcImwmiwiviEXnCrvETeX0yDQfD1hp0UxLzyR9EENQhQ" align="center" alt="Rumarino" />
+ <img width="100px" src="rumarino.png" align="center" alt="Rumarino" />
    
 <p align="center">
      <a alt="Jetpack">
       <img src="https://img.shields.io/badge/Jetpack-4.4.1-orange?style=plastic" /></a>
+      <a alt="Ubuntu Version">
+      <img src="https://img.shields.io/badge/Ubuntu-18.04 (Bionic) -orange?style=plastic" /></a>
     <a  alt="ROS_version">
       <img src="https://img.shields.io/badge/ROS%20Version-Melodic-orange?style=plastic" /></a>
      <a  alt="Cuda">
