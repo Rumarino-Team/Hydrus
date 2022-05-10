@@ -7,6 +7,7 @@ WORKDIR /hydrus
 RUN echo "Installing Required Dependencies"
 RUN apt-get update && apt-get install -y\
     git\
+    unzip\
     curl\
     python3\
     python3-pip\
@@ -19,6 +20,4 @@ RUN echo "Adding ROS source to .bashrc"
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 RUN echo "Cloning Software Packages"
-RUN cd catkin_ws/src
 RUN git clone https://github.com/Rumarino-Team/hydrus
-#CMD ["/bin/bash"] 
