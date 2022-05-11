@@ -1,0 +1,13 @@
+# Config file for DVL Component
+
+DVL_NODE_NAME: "camera"
+DVL_TOPIC_NAME: "hydrus/camera"
+DVL_TARGET_ROUTE: 'http://127.0.0.1:5000/camera'
+
+#these may be constansts in the system **change potentially 
+DVL_TRANSMISSION_DELAY: 3
+DVL_QUEUE_SIZE: 10
+DVL_RATE: 10
+
+DVL_PORT: "/dev/ttyUSB0"
+DVL_BAUDRATE: 19200

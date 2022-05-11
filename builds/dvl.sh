@@ -6,7 +6,7 @@
 
 echo "Creating the ROS DVL PKG"
 cd /workspaces/Hydrus/jetson-tx2/catkin_ws/src/ # Change directory to your source directory of your standard catkin workspace
-catkin_create_pkg dvl rospy std_msgs message_generation message_runtime # create the dvl package
+catkin_create_pkg dvl rospy std_msgs geometry_msgs message_generation message_runtime # create the dvl package
 cd /workspaces/Hydrus/jetson-tx2/catkin_ws/ # change directory to your standard catkin workspace
 catkin_make # compile workspace 
 . ~/catkin_ws/devel/setup.bash # Add the workspace to your ROS environment you need to source the generated setup file
@@ -27,35 +27,43 @@ mkdir src # used src files files
 echo "Process of creating files that are needed for this package:"
 
 echo "Setting config directory"
-cd /workspaces/Hydrus/jetson-tx2/catkin_ws/src/dvl/config 
+cd config
 touch README.md # Creates readme.md for config directory
 
+cd ..
+
 echo "Setting message directory"
-cd /workspaces/Hydrus/jetson-tx2/catkin_ws/src/dvl/msg
+cd msg
 touch Raw_DVL.msg& # Creates .msg file for Raw DVL data
 touch README.md # Creates readme.md for message directory
 
+cd ..
+
 echo "Setting lauch directory"
-cd /workspaces/Hydrus/jetson-tx2/catkin_ws/src/dvl/launch 
+cd launch 
 touch hydrus_dvl.launch& # Creates .launch file for DVL component
 touch README.md # Creates readme.md for launch directory
 
+cd ..
+
 echo "Setting scripts directory"
-cd /workspaces/Hydrus/jetson-tx2/catkin_ws/src/dvl/scripts 
+cd scripts 
 touch dvl_node.py& # Creates the executable that the package will use
 touch README.md # Creates readme.md for message directory
 
+cd ..
+
 echo "Setting source directory"
-cd /workspaces/Hydrus/jetson-tx2/catkin_ws/src/dvl/src 
+cd src 
 touch README.md # Creates readme.md for source directory
 mkdir lib # Directory that will hold libraries built by user or any programing library required.
 cd lib 
 touch README.md # Creates readme.md for lib directory
 
-echo "Setup of Directory for the DVL Programming Library:"
-unzip /workspaces/Hydrus/Wayfinder.zip -d ${DVL}/src/lib
-cd Wayfinder 
-pip3 install . # locally install python package
+# echo "Setup of Directory for the DVL Programming Library:"
+# unzip /workspaces/Hydrus/Wayfinder.zip -d /workspaces/Hydrus/jetson-tx2/catkin_ws/src/dvl/src/lib
+# cd Wayfinder 
+# pip3 install . # locally install python package
 
 cd /workspaces/Hydrus/jetson-tx2/catkin_ws/ # change directory to your standard catkin workspace
 catkin_make # compile workspace 
