@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+import sys
 from rospy import Publisher, Rate, init_node, is_shutdown, Time, get_param
 from std_msgs.msg import Header
-from src.lib.Wayfinder.dvl import Dvl
 from dvl.msg import Raw_DVL # this import is giving problems 
+from src.lib.Wayfinder.dvl import Dvl
 from time import sleep
 
 _NODE_NAME = get_param('DVL_NODE_NAME')
