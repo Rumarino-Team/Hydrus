@@ -1,0 +1,8 @@
+<!-- The following launch file will trigger the controls_system_node.py for the rexrov2 vechicle.-->
+
+<launch>
+
+  <!-- Launching node: -->
+  <node name = "dvl_driver" pkg = "nav_sensors" type = "dvl_node.py" />
+
+</launch>
