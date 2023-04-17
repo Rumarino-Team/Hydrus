@@ -1,4 +1,5 @@
-
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
 
 geometry_msgs/Vector3 velocity # Velocity in m/s of the DVL relative tothe bottom X,Y,Z and Error components
 float32 vel_error

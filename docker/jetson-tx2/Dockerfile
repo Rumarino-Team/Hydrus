@@ -1,3 +1,6 @@
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
+
 FROM ros:noetic-ros-base
 LABEL author="Osvaldo Aquino <rtdc@upr.edu>"
 #WORKDIR /hydrus
@@ -22,6 +25,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y\
     ros-$ROS_DISTRO-rosserial \
     ros-$ROS_DISTRO-rosserial-arduino \
     vim \ 
+    apt-utils\
     && rm -rf /var/lib/apt/lists/* 
 
 

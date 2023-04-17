@@ -1,3 +1,5 @@
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
 #!/usr/bin/env python3
 import rospy
 from nav_sensors.msg import DVL_MSG

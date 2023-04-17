@@ -1,3 +1,5 @@
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
 #!/usr/bin/env python3
 
 import sys

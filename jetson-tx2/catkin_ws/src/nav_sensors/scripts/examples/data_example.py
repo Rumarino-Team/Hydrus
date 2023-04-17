@@ -1,5 +1,7 @@
-"""Example usage for DVL driver
-"""
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
+# Example usage for DVL driver
+
 from dvl.dvl import Dvl
 from dvl.system import OutputData
 import math

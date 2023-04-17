@@ -1,5 +1,7 @@
-"""Example usage for DVL driver (software trigger)
-"""
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
+# Example usage for DVL driver (software trigger)
+
 from time import sleep
 from dvl.dvl import Dvl
 from dvl.system import OutputData

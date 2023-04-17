@@ -1,3 +1,5 @@
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
 #!/usr/bin/env python3
 
 
@@ -327,7 +329,9 @@ class WayfinderDVL(DVL_Component):
         if not self.wayfinder.set_setup(SETUP):
             self._logger.write("Failed to set system setup \n")
         else:
-            
+            self.wayfinder.get_tests()
+            print(self.wayfinder.system_tests.tests)
+                    
             # register callback function to be exectuted
             self.wayfinder.register_ondata_callback(self.data_cb, None)
 

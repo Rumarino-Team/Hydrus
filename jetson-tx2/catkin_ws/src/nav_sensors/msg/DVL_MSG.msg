@@ -1,5 +1,5 @@
-
-
+# Copyright (c) 2023 Real-Time Development Center (RTDC) Project
+# All rights reserved.
 
 std_msgs/Header header
 bool is_valid
