@@ -3,7 +3,7 @@
 #!/usr/bin/env python3
 
 import sys
-from dvl_data import WayfinderDVL, Dummy_DVL
+from scripts.dvl_data import WayfinderDVL, Dummy_DVL
 from time import sleep
 from rospy import Publisher, Rate, init_node, is_shutdown, Time, get_time, get_param, ROSInterruptException, loginfo
 from std_msgs.msg import Header
@@ -19,9 +19,6 @@ _NODE_NAME = 'dvl_driver'
 _TOPIC_NAME = '/hydrus/dvl'
 _TRANSMISSION_RATE = 10
 
-# _NODE_NAME = get_param('DVL_NODE_NAME')
-# _TOPIC_NAME = get_param('DVL_TOPIC_NAME') 
-# _TRANSMISSION_RATE = get_param('DVL_TRANSMISSION_RATE')
 
 class DVL_Wrapper:
     """ TODO: DOCUMENT"""
@@ -48,7 +45,6 @@ class DVL_Wrapper:
             self.dvl = WayfinderDVL() # Create instance of Teledyne RD Instruments Wayfinder Doppler Velocity Logger (DVL)
             
         self.dvl_msg = DVL_MSG() # Create a ROS message instance to store DVL messages of Wayfinder of Simulated DVL data.
-        #self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size=get_param('DVL_QUEUE_SIZE')) # Create ros publisher to given arguments
         self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size= 10) # Instance of ROS Publisher to publish DVL information 
         init_node(NODE_NAME, anonymous=True) # Initialize ROS node
         self.rate = Rate(RATE) 
@@ -93,20 +89,13 @@ class DVL_Wrapper:
         msg.data.beams.beam2 = data['beams'][1]
         msg.data.beams.beam3 = data['beams'][2]
         msg.data.beams.beam4 = data['beams'][3]
-        # msg.data.position.x = data['position'][0]
-        # msg.data.position.y = data['position'][1]
-        # msg.data.position.z = data['position'][2]
         msg.data.mean_bottom_range = data['mean_bottom_range']
         msg.data.speed_of_sound = data['speed_of_sound']
-        msg.data.BT_status = data['BT_status']
         
         msg.power.input_voltage = power_info['input_voltage']
         msg.power.transmit_voltage = power_info['transmit_voltage']
         msg.power.transmit_current = power_info['transmit_current']
         
-        #serial number
-        msg.serial_number = power_info['serial_number']
-
     
     def _prepare_gen_msg(self):
         

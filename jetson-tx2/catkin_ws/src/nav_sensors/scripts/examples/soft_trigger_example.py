@@ -45,30 +45,6 @@ def update_data(output_data: OutputData, obj):
         print("serial number:", output_data.serial_number)
         print('=======================================================================================================================')
 
-        # if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
-        #     math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
-        #     return
-            #log NaN velocities 
-        # if output_data.is_velocity_valid():
-        #velocities = np.array([output_data.vel_x, output_data.vel_y, output_data.vel_z])
-        # log_file.write("velocities :" , velocities)
-        # log_file.write("veloity error: ", output_data.vel_err) 
-        # log_file.write("beams" , beams)
-        # log_file.write("coordinates: ", output_data.COORDINATES) 
-        # log_file.write("coordinate system:", output_data.coordinate_system)
-        # log_file.write("fw major version", output_data.fw_major_version)
-        # log_file.write("fw minor version:", output_data.fw_minor_version)
-        # log_file.write("patch version:", output_data.fw_patch_version)
-        # log_file.write("build version:", output_data.fw_build_version)
-        # log_file.write("mean range:", output_data.mean_range)
-        # log_file.write("Speed of sound:", output_data.speed_of_sound)
-        # log_file.write("data status:", output_data.status)
-        # log_file.write("input voltage:", output_data.voltage)
-        # log_file.write("transmit voltage:", output_data.transmit_voltage)
-        # log_file.write("current:", output_data.current)
-        # log_file.write("serial number:", output_data.serial_number)
-        # log_file.write('=======================================================================================================================')
-    
     else:
         print("NaN velocities") 
 

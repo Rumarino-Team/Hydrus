@@ -1,12 +1,10 @@
 # Copyright (c) 2023 Real-Time Development Center (RTDC) Project
 # All rights reserved.
 
-std_msgs/Header header
-bool is_valid
-nav_sensors/DVL_Info system_info
-nav_sensors/DVL_Data data
-#two unknowns
-int64 bit_count
-int64 bit_code
-nav_sensors/DVL_Power power
-std_msgs/String serial_number
+# ROS Message that represents the most notable values of the binary data output group 
+# available for the Teledyne Marine RD Instruments Doppler Velocity Logger (DVL)
+
+std_msgs/Header header # To provide functionality to parse a connection header and retrieve values from it
+nav_sensors/DVL_Info system_info # Stores notable system information of the DVL
+nav_sensors/DVL_Data data # Stores data informatin of the DVL
+nav_sensors/DVL_Power power # Stores power informatin of the DVL

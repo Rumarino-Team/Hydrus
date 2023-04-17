@@ -3,40 +3,38 @@
 #!/usr/bin/env python3
 
 
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
-from io import FileIO
-import numpy as np
-import datetime as dt
-import math
-import traceback
-from dvl.dvl import Dvl  # Wayfinder DVL
-from dvl.system import OutputData
-from time import sleep
-import os
+from dataclasses import dataclass # To create a Abstract Base Class for the DVL
+from abc import ABC, abstractmethod # To create a Abstract Base Class for the DVL
+from io import FileIO # For log files
+import numpy as np # Used for mathematical calculations
+import datetime as dt # To set real-time clock
+import math # To check for Not a Number (NaN) Velocities
+import traceback # Extract and print information about stack traces
+from dvl.dvl import Dvl # Import wayfinder dvl module from Teledyne Marine RDI
+from dvl.system import OutputData # Import BinaryDataOutputGroup Object from Teleyne Marine RDI
+from time import sleep # To generate a delay between dvl pings
+import os # To generate path 
 
-#ABS_PATH = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs/"
-#ABS_PATH = "/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/"
-#print(ABS_PATH )
-#PREV_LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs/"
-
-PREV_LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs'
+#Path to be used in order to generate a log file for the dvl
+PREV_LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs' 
 PREV_LOGGER_PREF = "dvl_log_attempts.txt"
 PREV_OS_PATH = os.path.join(PREV_LOGGER_DIR, PREV_LOGGER_PREF)
-# LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
+
+# Path to be used as the log file for the dvl
 LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs'
 LOGGER_NUM_FORMAT = "%06d.log"
 WRITE_COMMAND = 'w'           
 READ_COMMAND = 'r'
-# LOGGER_PATH = put inside obj
 
 print(PREV_OS_PATH)
 
 # Macro Declarations
+SW_TRIGGER = 1 
 DVL_BAUDRATE = 115200
 DVL_PORT = '/dev/ttyUSB0'
 MAX_DEPTH = 20
 MAX_RANGE = 20
+PING_TIME = 40/1000 #40 ms
 
 MIN = 0
 UINT8 = 2**8
@@ -64,7 +62,7 @@ class DVL_Component(ABC):
     DESCRIPTION
 
     Args:
-        ABC (_type_): _description_
+        ABC (_type_): Abstract Base Class for DVL Component
     
     PACKAGE CONTENTS
     
@@ -72,6 +70,13 @@ class DVL_Component(ABC):
 
     def __init__(self):
         """
+        _binary_data_output_group: dict
+        _logger:FileIO
+        _log_file_counter: int
+        _ROLL : np.radians
+        _PITCH:
+        _YAW:
+        
 
         """
         
@@ -83,8 +88,7 @@ class DVL_Component(ABC):
         self._PITCH: np.radians = np.radians(PITCH_ANGLE)  # y ->
         self._YAW: np.radians = np.radians(YAW_ANGLE)  # z ->
         self._prev_time: int = START_TIME
-        self._prev_pose: np.array 
-        self._curr_pose: np.array
+
 
 
     def __post_init__(self):
@@ -119,33 +123,34 @@ class DVL_Component(ABC):
 
     @abstractmethod
     def get_time():
-        """_summary_
+        """Gets DVL Time
 
         Raises:
             NotImplementedError: _description_
         """
         raise NotImplementedError
-
-    @abstractmethod
-    def set_time():
-        raise NotImplementedError
+    
 
     @abstractmethod
     def set_setup(self):
-        """Sets up the DVL system
+        """
+        Sets up the DVL system
         Should be overriden in a child class.
         """
         raise NotImplementedError
 
     @abstractmethod
     def get_setup(self):
-        """Sets up the DVL system
+        """Gets the setup the DVL system
         Should be overriden in a child class.
         """
         raise NotImplementedError
 
     def setup_transposition_matrix(self):
-
+        
+        """
+        Sets the Instrument to Ship rotation according to Wayfinder Manual
+        """
 
         self._transposition_matrix = np.array(\
         [
@@ -182,32 +187,62 @@ class DVL_Component(ABC):
         """
 
         try:
+            # open prev log file to view the current log_num
             with open(PREV_OS_PATH, READ_COMMAND) as prev_log:
+                # extract log_num
                 self.log_file_counter = int(prev_log.readline()) + 1
         except Exception:
+            # 0 will be assigned if there is not a number
             self.log_file_counter = 0
 
+        # Update log_num
         with open(PREV_OS_PATH, WRITE_COMMAND) as lastLog:
             lastLog.write("%d\n" % self.log_file_counter)
-
-        print(os.path.join(LOGGER_DIR, LOGGER_NUM_FORMAT % self.log_file_counter))
         
+        #Create logger
         self._logger = open(os.path.join(
             LOGGER_DIR, LOGGER_NUM_FORMAT % self.log_file_counter), WRITE_COMMAND)
-        # os.path.join -> working_folder, prefix
 
 
     def reset_to_defauls(self):
+        """Resets the DVL to factory settings
+
+        Raises:
+            NotImplementedError: _description_
+        """
         raise NotImplementedError
 
     def enter_command_mode(self):
+        """Enters the dvl command mode
+
+        Raises:
+            NotImplementedError: _description_
+        """
         raise NotImplementedError
 
     def exit_command_mode(self):
+        """Exits the dvl command mode
+
+        Raises:
+            NotImplementedError: _description_
+        """
         raise NotImplementedError
 
 
 class WayfinderDVL(DVL_Component):
+    """Help on package WayfinderDVL_Component
+    
+    NAME 
+        DVL_Component
+    
+    DESCRIPTION
+
+    Args:
+        ABC (_type_): Abstract Base Class for DVL Component
+    
+    PACKAGE CONTENTS
+    
+    """
 
     def __init__(self):
         DVL_Component.__init__(self)
@@ -260,6 +295,7 @@ class WayfinderDVL(DVL_Component):
         """
         return self.wayfinder.get_setup()
 
+
     def set_setup(self):
         """_summary_
 
@@ -281,18 +317,22 @@ class WayfinderDVL(DVL_Component):
         """
         self.wayfinder.reset_to_defaults()
 
+
     def enter_command_mode(self):
         """_summary_
         """
         self.wayfinder.enter_command_mode()
+
 
     def exit_command_mode(self):
         """_summary_
         """
         self.wayfinder.exit_command_mode()
 
+
     def send_software_trigger(self):
         self.wayfinder.send_software_trigger()
+
 
     def setup_wayfinder(self):
 
@@ -316,7 +356,7 @@ class WayfinderDVL(DVL_Component):
             
             self._binary_data_output_group['sys_info'] = {}
 
-            SETUP.software_trigger = 1  # enable software
+            SETUP.software_trigger = SW_TRIGGER  # enable software
             SETUP.max_depth = MAX_DEPTH # Maximum tracking depth in meters
             SETUP.max_vb_range = MAX_RANGE # Maximum vertical beam range in meters
             
@@ -339,10 +379,9 @@ class WayfinderDVL(DVL_Component):
             if not self.wayfinder.exit_command_mode():
                 self._logger.write("Failed to exit comamnd mode \n")
 
-            # verify
-            twoseconds = dt.datetime.now() + dt.timedelta(seconds=2)
-            target_time = dt.datetime(twoseconds.year, twoseconds.month, twoseconds.day,
-                                     twoseconds.hour, twoseconds.minute, twoseconds.second)
+            fourtyms = dt.datetime.now() + dt.timedelta(seconds=PING_TIME)
+            target_time = dt.datetime(fourtyms.year, fourtyms.month, fourtyms.day,
+                                     fourtyms.hour, fourtyms.minute, fourtyms.second)
             current_time = dt.datetime.now()
             
             delta_time = target_time - current_time
@@ -352,12 +391,11 @@ class WayfinderDVL(DVL_Component):
             sleep((delta_time).total_seconds())
 
             self.wayfinder.set_time(dt.datetime.now())  # set time
-            print("Software trigger every 2 seconds - press Ctrl+C to stop")
             RUN = True
             while RUN:
                 try:
                     # Ping every 2 milliseconds
-                    sleep(2/1000)
+                    sleep(PING_TIME)
                     if not self.wayfinder.send_software_trigger():
                         self._logger.write("Failed to send software trigger \n")
                 except KeyboardInterrupt:
@@ -385,20 +423,19 @@ class WayfinderDVL(DVL_Component):
             self._logger.write("Got data {0}\n".format(txt))
             print('DVL Time (from examples): ', time)
 
-            # if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
-            #         math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
-            #     self._logger.write("NaN velocities\n")
-            #     return
+            if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
+                    math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
+                self._logger.write("NaN velocities\n")
+                return
 
-            # if output_data.is_velocity_valid():
-            velocity = np.array(
-                [output_data.vel_x, output_data.vel_y, output_data.vel_z])
-            self._binary_data_output_group['data']['velocity'] = velocity
-            self._logger.write("%9.3f %9.3f %9.3f, \n" % (velocity[0], velocity[1], velocity[2]))
-            # else:
-            #     self._logger.write("Invalid velocities\n")
-            #     return
-
+            if output_data.is_velocity_valid():
+                velocity = np.array(
+                    [output_data.vel_x, output_data.vel_y, output_data.vel_z])
+                self._binary_data_output_group['data']['velocity'] = velocity
+                self._logger.write("%9.3f %9.3f %9.3f, \n" % (velocity[0], velocity[1], velocity[2]))
+            else:
+                self._logger.write("Invalid velocities\n")
+                return
 
             print("Velocity Vector w/o rotation :", velocity)
             
@@ -407,7 +444,7 @@ class WayfinderDVL(DVL_Component):
                 self._transposition_matrix, velocity)
             
             print("Velocity Vector after rotation :", velocity)
-            # self._logger.write("%9.3f %9.3f %9.3f, \n" % (self._velocity[0], self._velocity[1], self._velocity[2]))
+            self._logger.write("%9.3f %9.3f %9.3f, \n" % (self._velocity[0], self._velocity[1], self._velocity[2]))
         
             self._binary_data_output_group['data']['velocity_error'] = output_data.vel_err
             
@@ -432,8 +469,6 @@ class WayfinderDVL(DVL_Component):
                    output_data.bit_code))
             
             self._prev_time = dataTimestamp_boot_us
-            #self._prev_pose[0:3] = self.curr_attitude
-            #self.data.append([dataObj, AP_offset_us, currAtt, prevPose])
             self._logger.write('\n')
             
             print("=============================================================================================================================================\n")

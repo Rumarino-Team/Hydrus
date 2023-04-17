@@ -2,8 +2,8 @@
 # All rights reserved.
 # Example usage for DVL driver
 
-from dvl.dvl import Dvl
-from dvl.system import OutputData
+from dvl.dvl import Dvl # import wayfinder dvl module from Teledyne Marine RDI
+from dvl.system import OutputData # import BinaryDataOutputGroup Object from Teleyne Marine RDI
 import math
 import numpy as np
 
@@ -48,16 +48,10 @@ if __name__ == "__main__":
             # Stop pinging
             if not DVL.enter_command_mode():
                 print("Failed to stop pinging")
-
+            # Enter command mode 
             # Reset to factory defaults (requires Wayfinder to be in 'command mode')
             if not DVL.reset_to_defaults():
                 print("Failed to reset to factory defaults")
-
-            # # Collect data - make sure working folder exists
-            # if not DVL.start_logging("c:/temp", "DVL"):
-            #     print("Failed to start logging")
-            # else:
-            #     print("Data logged to {0}".format(DVL.get_log_file_name()))
 
             # Register callback function
             DVL.register_ondata_callback(update_data)
