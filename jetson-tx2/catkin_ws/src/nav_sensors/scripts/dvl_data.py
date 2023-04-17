@@ -33,6 +33,8 @@ print(PREV_OS_PATH)
 # Macro Declarations
 DVL_BAUDRATE = 115200
 DVL_PORT = '/dev/ttyUSB0'
+MAX_DEPTH = 20
+MAX_RANGE = 20
 
 MIN = 0
 UINT8 = 2**8
@@ -76,23 +78,10 @@ class DVL_Component(ABC):
         self._log_file_counter: int
         self._binary_data_output_group: dict = {}
         # Assign random values to each parameter:
-        # x -> so that the instrument faces up
         self._ROLL: np.radians = np.radians(ROLL_ANGLE)
         self._PITCH: np.radians = np.radians(PITCH_ANGLE)  # y ->
         self._YAW: np.radians = np.radians(YAW_ANGLE)  # z ->
         self._prev_time = START_TIME
-        self._data: list
-        self._velocity: np.array
-        self._vel_mean: np.mean
-        self._confidence: float
-        self._velocity_error: float
-        self._beams: np.array
-        self._coordinates: list[4]
-        self._coordinate_system: int
-        self._mean_bottom_range: float
-        self._speed_of_sound: float
-        self._input_voltage: float
-        self._transmit_current: float
         self._prev_pose: np.array 
         self._curr_pose: np.array
 
@@ -101,54 +90,6 @@ class DVL_Component(ABC):
         """ Post init function used to increment the global class variables used in this object."""
 
         self.setup_transposition_matrix()  # instrument to ship rotation matrix
-
-    @property
-    def ROLL(self) -> np.radians:
-        return self._ROLL
-
-    @property
-    def YAW(self) -> np.radians:
-        return self._YAW
-
-    @property
-    def velocity(self) -> list:
-        return self._velocity
-
-    @property
-    def velocity_error(self) -> int:
-        return self._velocity_error
-
-    @property
-    def beams(self) -> list:
-        return self._beams
-
-    @property
-    def coordinates(self) -> list:
-        return self._coordinates
-
-    @property
-    def velocity_error(self) -> int:
-        return self._velocity_error
-
-    @property
-    def coordinate_system(self) -> int:
-        return self._coordinate_system
-
-    @property
-    def mean_bottom_range(self) -> float:
-        return self._mean_bottom_range
-
-    @property
-    def speed_of_sound(self) -> float:
-        return self._speed_of_sound
-
-    @property
-    def input_voltage(self) -> float:
-        return self._input_voltage
-
-    @property
-    def transmit_current(self) -> float:
-        return self._transmite_voltage
 
     @abstractmethod
     def connect(self, port, baudrate):
@@ -357,12 +298,10 @@ class WayfinderDVL(DVL_Component):
         self.wayfinder = Dvl()
 
         if not self.connect(DVL_PORT, DVL_BAUDRATE):
-            # print that the logging failed
             self._logger.write("Error connecting \n")
             
         self._logger.write("Connection Succesful \n")
 
-        # think about getting dvl setup
 
         self.reset_to_defaults()
 
@@ -375,8 +314,10 @@ class WayfinderDVL(DVL_Component):
             self._binary_data_output_group['sys_info'] = {}
             print(SETUP)
             self._logger.write('%s \n' % SETUP)
+            
             SETUP.software_trigger = 1  # enable software
-
+            SETUP.max_depth = MAX_DEPTH # Maximum tracking depth in meters
+            SETUP.max_vb_range = MAX_RANGE # Maximum vertical beam range in meters
         if not self.wayfinder.set_setup(SETUP):
             self._logger.write("Failed to set system setup \n")
         else:
@@ -603,10 +544,6 @@ class Dummy_DVL(DVL_Component):
         """Callback function to generate dummy data"""
         self.generate_data()
 
-    # def get_dummy_data_as_json(self): # Not being used currently.
-    #     """Returns the DVL output in json format."""
-    #     self.extract_data()
-    #     return {'DVL_Data' : vars(self.output)}
 
     def generate_data(self):
         '''
@@ -710,18 +647,4 @@ class Dummy_DVL(DVL_Component):
 
 if __name__ == '__main__':
     """Testing method from data class."""
-    print('Creating DVL Test Object:')
-    # dvl = Dummy_DVL()
-    # while not dvl.connect(DEFAULT_LINUX_SERIAL_PORT, 115200):
-    #     pass
-    # dvl.reset_to_defauls()
-    # dvl.enter_command_mode()
-    # dvl.set_time()
-    # dvl.exit_command_mode()
-    # dvl.data_cb()
-    # data = dvl.get_data()
-    # print(data)
-    # print(data.values())
-    # print(data['DVL_Data']['sys_info']['version'])
-    # dvl.disconnect()
     dvl = WayfinderDVL()
