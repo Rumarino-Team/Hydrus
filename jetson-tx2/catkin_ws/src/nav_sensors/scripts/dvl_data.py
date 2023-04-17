@@ -147,13 +147,13 @@ class DVL_Component(ABC):
 
         self._transposition_matrix = np.array(\
         [
-            [np.cos(self.YAW) * np.cos(self._PITCH), 
-            np.cos(self.YAW) * np.sin(self._PITCH) * np.sin(self._ROLL) - np.sin(self.YAW) * np.cos(self._ROLL),
-            np.cos(self.YAW) * np.sin(self._PITCH) * np.cos(self._ROLL) + np.sin(self.YAW) * np.sin(self._ROLL)
+            [np.cos(self._YAW) * np.cos(self._PITCH), 
+            np.cos(self._YAW) * np.sin(self._PITCH) * np.sin(self._ROLL) - np.sin(self._YAW) * np.cos(self._ROLL),
+            np.cos(self._YAW) * np.sin(self._PITCH) * np.cos(self._ROLL) + np.sin(self._YAW) * np.sin(self._ROLL)
             ],
-            [np.sin(self.YAW) * np.cos(self._PITCH), 
-            np.sin(self.YAW) * np.sin(self._PITCH) * np.sin(self._ROLL) + np.cos(self.YAW) * np.cos(self._ROLL),
-            np.sin(self.YAW) * np.sin(self._PITCH) * np.cos(self._ROLL) - np.cos(self.YAW) * np.sin(self._ROLL)
+            [np.sin(self._YAW) * np.cos(self._PITCH), 
+            np.sin(self._YAW) * np.sin(self._PITCH) * np.sin(self._ROLL) + np.cos(self._YAW) * np.cos(self._ROLL),
+            np.sin(self._YAW) * np.sin(self._PITCH) * np.cos(self._ROLL) - np.cos(self._YAW) * np.sin(self._ROLL)
             ],
             [-np.sin(self._PITCH),
             np.cos(self._PITCH) * np.sin(self._ROLL),

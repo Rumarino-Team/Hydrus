@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y\
     ros-$ROS_DISTRO-rosserial \
     ros-$ROS_DISTRO-rosserial-arduino \
     vim \ 
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+    && rm -rf /var/lib/apt/lists/* 
 
 
 RUN echo "Creating ROS catkin_ws"
