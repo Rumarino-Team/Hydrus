@@ -441,22 +441,22 @@ class WayfinderDVL(DVL_Component):
             #     return
 
             # if output_data.is_velocity_valid():
-            self._velocity = np.array(
+            velocity = np.array(
                 [output_data.vel_x, output_data.vel_y, output_data.vel_z])
-            self._binary_data_output_group['data']['velocity'] = self._velocity
-            self._logger.write("%9.3f %9.3f %9.3f, \n" % (self._velocity[0], self._velocity[1], self._velocity[2]))
+            self._binary_data_output_group['data']['velocity'] = velocity
+            self._logger.write("%9.3f %9.3f %9.3f, \n" % (velocity[0], velocity[1], velocity[2]))
             # else:
             #     self._logger.write("Invalid velocities\n")
             #     return
 
 
-            print("Velocity Vector w/o rotation :", self._velocity)
+            print("Velocity Vector w/o rotation :", velocity)
             
             # matrix multiplication
-            self._velocity = np.matmul(
-                self._transposition_matrix, self._velocity)
+            velocity = np.matmul(
+                self._transposition_matrix, velocity)
             
-            print("Velocity Vector after rotation :", self._velocity)
+            print("Velocity Vector after rotation :", velocity)
             # self._logger.write("%9.3f %9.3f %9.3f, \n" % (self._velocity[0], self._velocity[1], self._velocity[2]))
 
             # determine delta time
@@ -493,60 +493,24 @@ class WayfinderDVL(DVL_Component):
                 (vel_err_max - vel_err_min) * percentage_err_vol
 
         
-            self._velocity_error = output_data.vel_err
-            self._binary_data_output_group['data']['velocity_error'] = self._velocity_error
+            self._binary_data_output_group['data']['velocity_error'] = output_data.vel_err
             
-            self._beams = np.array([output_data.range_beam1, output_data.range_beam2,
+            self._binary_data_output_group['data']['beams'] = np.array([output_data.range_beam1, output_data.range_beam2,
                                     output_data.range_beam3, output_data.range_beam4])
-            self._binary_data_output_group['data']['beams'] = self._beams
             
             self._coordinates = output_data.COORDINATES
             self._coordinate_system = output_data.coordinate_system
             
-            self._mean_bottom_range = output_data.mean_range
-            self._binary_data_output_group['data']['mean_bottom_range'] = self._mean_bottom_range
+            self._binary_data_output_group['data']['mean_bottom_range'] = output_data.mean_range
             
-            self._speed_of_sound = output_data.speed_of_sound
-            self._binary_data_output_group['data']['speed_of_sound'] = self._speed_of_sound
+            self._binary_data_output_group['data']['speed_of_sound'] = output_data.speed_of_sound
             
             self._binary_data_output_group['power_info'] = {}
+            self._binary_data_output_group['power_info']['input_voltage'] = output_data.voltage
+            self._binary_data_output_group['power_info']['transmit_voltage'] = output_data.transmit_voltage
+            self._binary_data_output_group['power_info']['transmit_current'] = output_data.current 
             
-            self._input_voltage = output_data.voltage
-            self._transmit_voltage = output_data.transmit_voltage
-            current = output_data.current 
-            
-            serial_numer = output_data.serial_number
-
-            self._binary_data_output_group['power_info']['input_voltage'] = self._input_voltage
-            self._binary_data_output_group['power_info']['transmit_voltage'] = self._transmit_voltage
-            self._binary_data_output_group['power_info']['transmit_current'] = current
-            
-            self._binary_data_output_group['serial_number'] = serial_numer
-
-            # tengo que estar seguro que
-            # me da la medida como se supone
-
-            # self._logger.write("Velocity Vector :", self._velocity)
-            # self._logger.write("Confidence Level: ", self._confidence)
-            # self._logger.write("Velocity Error: ", output_data.vel_err)
-            # self._logger.write("Beams", self._beams)
-            # self._logger.write("coordinates: ", output_data.COORDINATES)
-            # self._logger.write("coordinate system:",
-            #                    output_data.coordinate_system)
-            # self._logger.write("fw major version",
-            #                    output_data.fw_major_version)
-            # self._logger.write("fw minor version:",
-            #                    output_data.fw_minor_version)
-            # self._logger.write("patch version:", output_data.fw_patch_version)
-            # self._logger.write("build version:", output_data.fw_build_version)
-            # self._logger.write("mean range:", output_data.mean_range)
-            # self._logger.write("Speed of sound:", output_data.speed_of_sound)
-            # self._logger.write("data status:", output_data.status)
-            # self._logger.write("input voltage:", output_data.voltage)
-            # self._logger.write("transmit voltage:",
-            #                    output_data.transmit_voltage)
-            # self._logger.write("current:", output_data.current)
-            # self._logger.write("serial number:", output_data.serial_number)
+            self._binary_data_output_group['serial_number'] = output_data.serial_number
 
             print("%9.3f %9.3f %9.3f | %9.3f | %9.3f %9.3f %9.3f %9.3f | %s" %
                   (self._velocity[0], self._velocity[1], self._velocity[2], self._velocity_error, self._beams[0],
@@ -557,24 +521,31 @@ class WayfinderDVL(DVL_Component):
             #self._prev_pose[0:3] = self.curr_attitude
             #self.data.append([dataObj, AP_offset_us, currAtt, prevPose])
             self._logger.write('\n')
+            
+            print("=============================================================================================================================================\n")
+            print("PRINTING VALUES GENERATED FOR WAYFINDER DOPPLER VELOCITY LOGGER: \n")
+            print("System Information = ",
+                self._binary_data_output_group['sys_info'], '\n')
+            print("Velocity (in m/s) =",
+                self._binary_data_output_group['data']['velocity'], '\n')
+            print("Velocity Error (in m/s) =",
+                self._binary_data_output_group['data']['velocity_error'], '\n')
+            print("Position (in m) =",
+                self._binary_data_output_group['data']['position'], '\n')
+            print("Beams (in meters) = ",
+                self._binary_data_output_group['data']['beams'], '\n')
+            print("Mean Range To Bottom (in meters) =",
+                self._binary_data_output_group['data']['mean_bottom_range'], '\n')
+            print("Speed of Sound (in m/s) =",
+                self._binary_data_output_group['data']['speed_of_sound'], '\n')
+            print("BT Status =",
+                self._binary_data_output_group['data']['BT_status'], '\n')
+            print("Power Information = ",
+                self._binary_data_output_group['power_info'], '\n')
+            print("System Serial Number = ",
+                self._binary_data_output_group['serial_number'], '\n')
+            print("================================================================================================================================================\n")
 
-            print("Velocity Vector :", self._velocity)
-            print("Confidence Level: ", self._confidence)
-            print("Velocity Error: ", output_data.vel_err)
-            print("Beams", self._beams)
-            print("coordinates: ", output_data.COORDINATES)
-            print("coordinate system:", output_data.coordinate_system)
-            print("fw major version", output_data.fw_major_version)
-            print("fw minor version:", output_data.fw_minor_version)
-            print("patch version:", output_data.fw_patch_version)
-            print("build version:", output_data.fw_build_version)
-            print("mean range:", output_data.mean_range)
-            print("Speed of sound:", output_data.speed_of_sound)
-            print("data status:", output_data.status)
-            print("input voltage:", output_data.voltage)
-            print("transmit voltage:", output_data.transmit_voltage)
-            print("current:", output_data.current)
-            print("serial number:", output_data.serial_number)
             # else:
             #     return
 
