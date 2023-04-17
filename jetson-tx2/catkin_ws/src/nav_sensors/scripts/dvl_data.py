@@ -106,6 +106,7 @@ class DVL_Component(ABC):
 
         """
 
+
         self._logger: FileIO
         self._log_file_counter: int
         self._binary_data_output_group: dict = {}
