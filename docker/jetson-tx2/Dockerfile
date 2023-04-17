@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y\
     curl\
     python3\
     python3-pip\
-    ros-$ROS_DISTRO-rosserial-python \
     ros-$ROS_DISTRO-rqt \
     ros-$ROS_DISTRO-rqt-common-plugins \
     ros-$ROS_DISTRO-rqt-graph \
+    vim \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo "Initializing rosdep"

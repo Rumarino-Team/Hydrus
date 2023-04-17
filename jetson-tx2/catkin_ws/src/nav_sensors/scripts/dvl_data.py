@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from io import FileIO
@@ -16,7 +17,7 @@ import os
 #ABS_PATH = "/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/"
 #print(ABS_PATH )
 #PREV_LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
-PREV_LOGGER_DIR = '/hydrus/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
+PREV_LOGGER_DIR = '/hydrus/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
 PREV_LOGGER_PREF = "dvl_log_attempts.txt"
 PREV_OS_PATH = os.path.join(PREV_LOGGER_DIR, PREV_LOGGER_PREF)
 # LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
@@ -27,7 +28,6 @@ READ_COMMAND = 'r'
 # LOGGER_PATH = put inside obj
 
 print(PREV_OS_PATH)
-
 
 # Macro Declarations
 DVL_BAUDRATE = 115200
@@ -48,57 +48,21 @@ PITCH_ANGLE = 0
 YAW_ANGLE = 45
 START_TIME = 0
 
-# i need the IMU
-# the imu gives me the body frame
-# i dont necessarily need the values; I will just use the IMU as
-# since the vehicle is a rigid body; all of its parts should be moving the same
-# en roll, pitch no hay nada
-# velocidades lineales
-# velocidades angulares* that can cause problems
-
-# max altitude 60m
-# min altitude 0.5m
-# velocity range 10 m/s
-
-# X Y Axis Alligment Variables: These angles will allow the vehicle to obta
-# since the Wayfinder Instrument Coordinates axis are always oriented the same relative to
-# the Wayfinder
-# TODO: fix
-# these angle will depend on the orientation of the dvl on the vehicle so that it
-# matches the coordinate system of
-
-# these values indicate the angular orientation of the vehicle
-
-# sensor frame (dvl) to imu frame (body frame)
-
-# cual es el frame
-# BLUEROV EXAMPLE:
-# ROLL = np.radians(180) # x -> so that the instrument faces u0p
-# PITCH = np.radians(0)  # y
-# YAW = np.radians(135)  # z
-
-# en vez de tener una matriz grande; puedo
-
-# coger la informacion del dvl
-
-# the IMU is used to setup the body frame
-
-# For our vehicle's case:
-# x and y are in alligned the same as the IMU
-# to have less error prone values (prototype porpuses):
-# duct tape the imu so that it allings to the dvl
-# for prototype porpuses
-# si
-# ve a la piscina de ricardo -> usa la matrix de ricardo y usa la matrix que me
-# dieron y verifica si cuando me muevo para alfrente
-# si me muevo en Y para alfrente y no sale positivo
-# si me muevo para alfrente en x deberia ser cero cuando la roto
-
 
 @dataclass
 class DVL_Component(ABC):
-    """ Parent class used to create different ZED devices.
-    This class should not be used directly.
+    """Help on package DVL_Component
+    
+    NAME 
+        DVL_Component
+    
+    DESCRIPTION
+
+    Args:
+        ABC (_type_): _description_
+    
+    PACKAGE CONTENTS
+    
     """
 
     def __init__(self):
