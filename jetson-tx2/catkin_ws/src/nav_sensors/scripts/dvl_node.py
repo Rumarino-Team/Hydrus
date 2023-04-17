@@ -10,7 +10,9 @@ from nav_sensors.msg import DVL_MSG # this import is giving problems
 DVL_PORT = '/dev/ttyUSB0' # Default port for jetson, usually USB0
 DVL_BAUDRATE = 115200 # Default value (Recommended is 9200 or 115200) (Currently not being used)
 
-
+_SIM = 0 
+_WAYFINDER = 1
+_MODE = _WAYFINDER
 _NODE_NAME = 'dvl_driver'
 _TOPIC_NAME = '/hydrus/dvl'
 _TRANSMISSION_RATE = 10
@@ -22,26 +24,28 @@ _TRANSMISSION_RATE = 10
 class DVL_Wrapper:
     """ TODO: DOCUMENT"""
 
-    def __init__(self, NODE_NAME, TOPIC_NAME, RATE):
+    def __init__(self, NODE_NAME, TOPIC_NAME, RATE, MODE = _WAYFINDER):
         """ TODO: DOCUMENT"""
 
-        #self.dvl = Dummy_DVL()
-        self.dvl = WayfinderDVL()
-
-        # SETUP SIMULATION
-        # while not self.dvl.connect(DVL_PORT, DVL_BAUDRATE): 
-        #     pass
-        # self.dvl.reset_to_defauls()
-        # self.dvl.enter_command_mode()
-        # self.dvl.set_time()
-        # self.dvl.exit_command_mode()
-        # self.dvl.data_cb()
-        # self.data = self.dvl.get_data()
-        # print(self.data)
-        # print(self.data.values())
-        # print(self.data['DVL_Data']['sys_info']['version'])
-        # self.dvl.disconnect()
-
+        if MODE == _SIM:
+            self.dvl = Dummy_DVL()
+            # SETUP SIMULATION
+            while not self.dvl.connect(DVL_PORT, DVL_BAUDRATE): 
+                pass
+            self.dvl.reset_to_defauls()
+            self.dvl.enter_command_mode()
+            self.dvl.set_time()
+            self.dvl.exit_command_mode()
+            self.dvl.data_cb()
+            self.data = self.dvl.get_data()
+            print(self.data)
+            print(self.data.values())
+            print(self.data['DVL_Data']['sys_info']['version'])
+            self.dvl.disconnect()
+        # otherwise _WAYFINDER mode will be exectued 
+        else: 
+            self.dvl = WayfinderDVL()
+            
         self.dvl_msg = DVL_MSG() # Create message instance, instance will be reused by node to provide information
         #self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size=get_param('DVL_QUEUE_SIZE')) # Create ros publisher to given arguments
         self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size= 10) # Create ros publisher to given arguments
@@ -73,9 +77,9 @@ class DVL_Wrapper:
         msg = self.dvl_msg
         data = self.dvl.get_data()
         print(data.values())
-        sys_info = self.data['DVL_Data']['sys_info']
-        data = self.data['DVL_Data']['data']
-        power_info = self.data['DVL_Data']['power_info']
+        sys_info = data['DVL_Data']['sys_info']
+        data = data['DVL_Data']['data']
+        power_info = data['DVL_Data']['power_info']
 
 
         msg.header = self._get_msg_header() # Sets messageheader to message
@@ -166,6 +170,6 @@ class DVL_Wrapper:
 
 if __name__ == '__main__':
     try:
-        node = DVL_Wrapper(_NODE_NAME, _TOPIC_NAME, _TRANSMISSION_RATE)
+        node = DVL_Wrapper(_NODE_NAME, _TOPIC_NAME, _TRANSMISSION_RATE, _MODE)
     except ROSInterruptException:
         pass
