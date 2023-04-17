@@ -16,11 +16,11 @@ import os
 #ABS_PATH = "/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/"
 #print(ABS_PATH )
 #PREV_LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
-PREV_LOGGER_DIR = '/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
+PREV_LOGGER_DIR = '/hydrus/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
 PREV_LOGGER_PREF = "dvl_log_attempts.txt"
 PREV_OS_PATH = os.path.join(PREV_LOGGER_DIR, PREV_LOGGER_PREF)
 # LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
-LOGGER_DIR = '/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
+LOGGER_DIR = '/hydrus/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
 LOGGER_NUM_FORMAT = "%06d.log"
 WRITE_COMMAND = 'w'           
 READ_COMMAND = 'r'
