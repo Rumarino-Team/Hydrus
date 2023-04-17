@@ -25,13 +25,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y\
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
 
-RUN echo "Setup of ROS Entrypoint"
-RUN rm -rf /ros_entrypoint.sh
-COPY ./ros_entrypoint.sh /
-CMD ["bash"]
-ENTRYPOINT ["/ros_entrypoint.sh"]
-
-
 RUN echo "Creating ROS catkin_ws"
 RUN mkdir -p /opt/catkin_ws/src
 ENV CATKIN_WS /opt/catkin_ws
@@ -76,3 +69,10 @@ RUN pip3 install .
 RUN echo "Sourcing catkin_ws"
 WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
+
+
+RUN echo "Setup of ROS Entrypoint"
+RUN rm -rf /ros_entrypoint.sh
+COPY ./ros_entrypoint.sh /
+CMD ["bash"]
+ENTRYPOINT ["/ros_entrypoint.sh"]
