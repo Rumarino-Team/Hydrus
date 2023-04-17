@@ -24,4 +24,4 @@ RUN echo "Adding ROS source to .bashrc"
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 RUN echo "Cloning Software Packages"
-RUN git clone https://github.com/Rumarino-Team/hydrus
+RUN git clone --recursive https://github.com/Rumarino-Team/hydrus
