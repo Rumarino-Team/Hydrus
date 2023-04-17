@@ -72,8 +72,7 @@ class DVL_Component(ABC):
         """
 
         """
-
-
+        
         self._logger: FileIO
         self._log_file_counter: int
         self._binary_data_output_group: dict = {}
@@ -81,7 +80,7 @@ class DVL_Component(ABC):
         self._ROLL: np.radians = np.radians(ROLL_ANGLE)
         self._PITCH: np.radians = np.radians(PITCH_ANGLE)  # y ->
         self._YAW: np.radians = np.radians(YAW_ANGLE)  # z ->
-        self._prev_time = START_TIME
+        self._prev_time: int = START_TIME
         self._prev_pose: np.array 
         self._curr_pose: np.array
 
@@ -90,6 +89,7 @@ class DVL_Component(ABC):
         """ Post init function used to increment the global class variables used in this object."""
 
         self.setup_transposition_matrix()  # instrument to ship rotation matrix
+
 
     @abstractmethod
     def connect(self, port, baudrate):
@@ -170,15 +170,18 @@ class DVL_Component(ABC):
             ]
         ])
 
+
     def get_data(self):
         """Gets the data from the ZED device. This method should not be modified."""
         return {'DVL_Data': self._binary_data_output_group}
+
 
     def cb_data(self):
         """Used to retrieve the data from the DVL device according to the device being used.
         This method should be overriden in a child class.
         """
         raise NotImplementedError
+
 
     def setup_logger(self):
         """Configures the data logging
@@ -200,6 +203,7 @@ class DVL_Component(ABC):
             LOGGER_DIR, LOGGER_NUM_FORMAT % self.log_file_counter), WRITE_COMMAND)
         # os.path.join -> working_folder, prefix
 
+
     def reset_to_defauls(self):
         raise NotImplementedError
 
@@ -215,11 +219,12 @@ class WayfinderDVL(DVL_Component):
     def __init__(self):
         DVL_Component.__init__(self)
         self.setup_logger()
-        self.setup_transposition_matrix()
+        #self.setup_transposition_matrix()
         self.setup_wayfinder()
 
     def connect(self, port: str, baudrate: int = DVL_BAUDRATE) -> bool:
         self.wayfinder.connect(DVL_PORT, baudrate)
+
 
     def is_connected(self) -> bool:
         """_summary_
@@ -232,6 +237,7 @@ class WayfinderDVL(DVL_Component):
         """
         return self.wayfinder.is_connected()
 
+
     def get_time(self) -> None:
         """_summary_
 
@@ -239,6 +245,7 @@ class WayfinderDVL(DVL_Component):
             _type_: _description_
         """
         return self.wayfinder.get_time()
+
 
     def set_time(self, date_time) -> bool:
         """_summary_
@@ -250,6 +257,7 @@ class WayfinderDVL(DVL_Component):
             _type_: _description_
         """
         return self.wayfinder.set_time(date_time)
+
 
     def get_setup(self):
         """_summary_
@@ -311,20 +319,24 @@ class WayfinderDVL(DVL_Component):
         else:
             # Modify system setup structure to set software trigger
             SETUP = self.wayfinder.system_setup
-            self._binary_data_output_group['sys_info'] = {}
             print(SETUP)
-            self._logger.write('%s \n' % SETUP)
             
+            self._binary_data_output_group['sys_info'] = {}
+
             SETUP.software_trigger = 1  # enable software
             SETUP.max_depth = MAX_DEPTH # Maximum tracking depth in meters
             SETUP.max_vb_range = MAX_RANGE # Maximum vertical beam range in meters
+            
+            self._binary_data_output_group['sys_info']['software_trigger'] = SETUP.software_trigger
+            self._binary_data_output_group['sys_info']['max_depth'] = SETUP.max_depth
+            self._binary_data_output_group['sys_info']['max_vb_range'] = SETUP.max_vb_range
+            print(SETUP)
+            self._logger.write('%s \n' % SETUP)
+
         if not self.wayfinder.set_setup(SETUP):
             self._logger.write("Failed to set system setup \n")
         else:
-            # collect data
-
-            # start logging
-
+            
             # register callback function to be exectuted
             self.wayfinder.register_ondata_callback(self.data_cb, None)
 
@@ -355,6 +367,7 @@ class WayfinderDVL(DVL_Component):
                         self._logger.write("Failed to send software trigger \n")
                 except KeyboardInterrupt:
                     RUN = False
+
 
     def data_cb(self, output_data: OutputData, *args):
         """Callback function to generate dummy data"""
@@ -426,12 +439,12 @@ class WayfinderDVL(DVL_Component):
             vel_err_max = 1
             vel_err_min = 0.001
             percentage_err_vol = 0.005
-            self.vel_mean = np.mean(self._velocity)
+            vel_mean = np.mean(self._velocity)
             print("Velocity mean: \n", self.vel_mean)
 
             # self._confidence = 1 - (self.vel_mean - vel_err_min) / \
             #     (vel_err_max - vel_err_min)
-            self._confidence = 1 - (self.vel_mean - vel_err_min) / \
+            confidence = 1 - (self.vel_mean - vel_err_min) / \
                 (vel_err_max - vel_err_min) * percentage_err_vol
 
         
