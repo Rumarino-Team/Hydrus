@@ -32,7 +32,7 @@ print(PREV_OS_PATH)
 # Macro Declarations
 DVL_BAUDRATE = 115200
 DVL_PORT = '/dev/ttyUSB0'
-LOG_PATH = ''
+
 MIN = 0
 UINT8 = 2**8
 UINT16 = 2**16

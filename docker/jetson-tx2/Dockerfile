@@ -1,6 +1,5 @@
 FROM ros:noetic-ros-base
-ENV DEBIAN_FRONTEND=noninteractive
-
+LABEL author="Osvaldo Aquino <rtdc@upr.edu>"
 #WORKDIR /hydrus
 
 #ENV SHELL /bin/bash
@@ -9,7 +8,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 RUN echo "Installing Required Dependencies"
-RUN apt-get update && apt-get install -y\
+RUN apt-get update && apt-get install --no-install-recommends -y\
     git\
     curl\
     python3\
@@ -17,8 +16,8 @@ RUN apt-get update && apt-get install -y\
     ros-$ROS_DISTRO-rqt \
     ros-$ROS_DISTRO-rqt-common-plugins \
     ros-$ROS_DISTRO-rqt-graph \
-    vim \
-    && rm -rf /var/lib/apt/lists/*
+    vim \ 
+    && rm -rf /var/lib/apt/lists/* 
 
 # RUN echo "Initializing rosdep"
 # RUN rosdep update
@@ -29,35 +28,44 @@ RUN apt-get update && apt-get install -y\
 RUN rm -rf /ros_entrypoint.sh
 COPY ./ros_entrypoint.sh /
 CMD ["bash"]
+RUN echo "Creating ROS Entrypoint"
 ENTRYPOINT ["/ros_entrypoint.sh"]
+
+RUN echo "Creating ROS catkin_ws"
 RUN mkdir -p /opt/catkin_ws/src
 ENV CATKIN_WS /opt/catkin_ws
 WORKDIR ${CATKIN_WS}
-RUN ./opt/ros/noetic/setup.sh && catkin_make 
+RUN . /opt/ros/noetic/setup.sh && catkin_make 
 # RUN apt update 
 # RUN pip install -U rosdep 
 # RUN rosdep init 
 # RUN rosdep update
 
-RUN echo "Cloning ROS catkin_ws for Hydrus"
+RUN echo "Cloning optional add-on software packages for Hydrus"
 WORKDIR ${CATKIN_WS}
 RUN cd ./src 
 RUN git clone --recursive https://github.com/Rumarino-Team/hydrus
-RUN echo "Sourcing catkin_ws"
-WORKDIR ${CATKIN_WS}
-RUN ./opt/ros/noetic/setup.sh && catkin_make 
-RUN echo "Installing Teledyne RD Instruments Proprietary Python3 Driver for Wayfinder Doppler Velocity Logger (DVL)"
-WORKDIR ${CATKIN_WS}
-RUN cd ./src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/src/Wayfinder && pip3 install .
 
 RUN echo "Sourcing catkin_ws"
 WORKDIR ${CATKIN_WS}
-RUN ./opt/ros/noetic/setup.sh && catkin_make 
+RUN . /opt/ros/noetic/setup.sh && catkin_make 
+
+RUN echo "Installing Teledyne RD Instruments Proprietary Python3 Driver for Wayfinder Doppler Velocity Logger (DVL)"
+WORKDIR ${CATKIN_WS}
+RUN cd ./src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/src/Wayfinder
+RUN pip3 install .
+
+RUN echo "Sourcing catkin_ws"
+WORKDIR ${CATKIN_WS}
+RUN . /opt/ros/noetic/setup.sh && catkin_make 
+
 RUN echo "Installing ROS Dependencies"
 RUN apt update 
 RUN pip install -U rosdep 
+
 RUN echo "Initializing ROS Dependencies"
 RUN rosdep init 
+
 RUN echo "Updating ROS Dependencies"
 RUN rosdep update
 
