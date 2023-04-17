@@ -144,16 +144,7 @@ class DVL_Component(ABC):
 
     def setup_transposition_matrix(self):
 
-        # Y_x is negative on dvl manual but positive on formula (check)
 
-        # yaw_rotation = np.array(
-        #     [
-        #         [np.cos(self.YAW),   np.cos(self.YAW),       0,
-        #          -np.sin(self.YAW),    np.cos(self.YAW),      0,
-        #          0,                    0,              1]
-        #     ])
-
-        #self._transposition_matrix = yaw_rotation
         self._transposition_matrix = np.array(\
         [
             [np.cos(self.YAW) * np.cos(self._PITCH), 
@@ -219,7 +210,7 @@ class WayfinderDVL(DVL_Component):
     def __init__(self):
         DVL_Component.__init__(self)
         self.setup_logger()
-        #self.setup_transposition_matrix()
+        self.setup_transposition_matrix()
         self.setup_wayfinder()
 
     def connect(self, port: str, baudrate: int = DVL_BAUDRATE) -> bool:
@@ -444,7 +435,7 @@ class WayfinderDVL(DVL_Component):
 
             # self._confidence = 1 - (self.vel_mean - vel_err_min) / \
             #     (vel_err_max - vel_err_min)
-            confidence = 1 - (self.vel_mean - vel_err_min) / \
+            confidence = 1 - (vel_mean - vel_err_min) / \
                 (vel_err_max - vel_err_min) * percentage_err_vol
 
         
