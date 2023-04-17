@@ -86,14 +86,6 @@ class DVL_Wrapper:
         msg.header = self._get_msg_header() # Sets messageheader to message
 
 
-        # msg.system_info.year = sys_info['year']
-        # msg.system_info.month = sys_info['month']
-        # msg.system_info.day = sys_info['day']
-        # msg.system_info.hour = sys_info['hour']
-        # msg.system_info.minute = sys_info['minute']
-        # msg.system_info.second = sys_info['second']
-        # msg.system_info.coordinate_system = sys_info['coordinate_system']
-        
         msg.data.velocity.x, msg.data.velocity.y, msg.data.velocity.z = data['velocity'][0], data['velocity'][1], data['velocity'][2]
         msg.data.vel_error = data['velocity_error']
 

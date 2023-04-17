@@ -10,13 +10,11 @@ import math
 import numpy as np
 import os
 
-# log_path = '~/Desktop/dvl_test_out-of-water.txt'
-# log_file = open(log_path, 'w')
+
 
 def update_data(output_data: OutputData, obj):
     """Prints data time to screen
     """
-    #del obj
     if output_data is not None:
         print('=======================================================================================================================')
         time = output_data.get_date_time()
@@ -25,13 +23,12 @@ def update_data(output_data: OutputData, obj):
         # if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
         #     math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
         #     return
-            #log NaN velocities 
         # if output_data.is_velocity_valid():
         #velocities = np.array([output_data.vel_x, output_data.vel_y, output_data.vel_z])
         velocities = np.array([output_data.vel_x, output_data.vel_y, output_data.vel_z])
         print("velocities :" , velocities)
         beams = np.array([output_data.range_beam1, output_data.range_beam2, output_data.range_beam3, output_data.range_beam4])
-        print("veloity error: ", output_data.vel_err) 
+        print("velocity error: ", output_data.vel_err) 
         print("beams" , beams)
         print("coordinates: ", output_data.COORDINATES) 
         print("coordinate system:", output_data.coordinate_system)
@@ -47,8 +44,7 @@ def update_data(output_data: OutputData, obj):
         print("current:", output_data.current)
         print("serial number:", output_data.serial_number)
         print('=======================================================================================================================')
-        log_file.write('=======================================================================================================================')
-        log_file.write("Got data {0}".format(txt))
+
         # if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
         #     math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
         #     return
@@ -75,7 +71,6 @@ def update_data(output_data: OutputData, obj):
     
     else:
         print("NaN velocities") 
-        # log_file.write("NaN Velocities")
 
 if __name__ == "__main__":
 
@@ -107,14 +102,6 @@ if __name__ == "__main__":
                 if not DVL.set_setup(SETUP):
                     print("Failed to set system setup")
                 else:
-
-                    # # Collect data - make sure working folder exists
-                    # if not DVL.start_logging("c:/temp", "DVL"):
-                    #     print("Failed to start logging")
-                    # else:
-                    #     print("Data logged to {0}".format(DVL.get_log_file_name()))
-
-
 
                     # Exit command mode
                     if not DVL.exit_command_mode():

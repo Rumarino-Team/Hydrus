@@ -171,6 +171,7 @@ include_directories(
  catkin_install_python(PROGRAMS
    scripts/dvl_node.py
    scripts/dvl_sub.py
+   scripts/dvl_data.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
