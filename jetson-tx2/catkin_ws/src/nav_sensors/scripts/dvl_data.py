@@ -12,10 +12,15 @@ from dvl.system import OutputData
 from time import sleep
 import os
 
-PREV_LOGGER_DIR = "/home/osvaldo/DVL_logs/"
+#ABS_PATH = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
+#ABS_PATH = "/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/"
+#print(ABS_PATH )
+#PREV_LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
+PREV_LOGGER_DIR = '/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
 PREV_LOGGER_PREF = "dvl_log_attempts.txt"
 PREV_OS_PATH = os.path.join(PREV_LOGGER_DIR, PREV_LOGGER_PREF)
-LOGGER_DIR = "/home/osvaldo/DVL_logs/"
+# LOGGER_DIR = "/home/osvaldo/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/logs/"
+LOGGER_DIR = '/workspaces/Hydrus/jetson-tx2/catkin_ws/src/nav_sensors/scripts/'
 LOGGER_NUM_FORMAT = "%06d.log"
 WRITE_COMMAND = 'w'           
 READ_COMMAND = 'r'
@@ -283,6 +288,7 @@ class DVL_Component(ABC):
             lastLog.write("%d\n" % self.log_file_counter)
 
         print(os.path.join(LOGGER_DIR, LOGGER_NUM_FORMAT % self.log_file_counter))
+        
         self._logger = open(os.path.join(
             LOGGER_DIR, LOGGER_NUM_FORMAT % self.log_file_counter), WRITE_COMMAND)
         # os.path.join -> working_folder, prefix

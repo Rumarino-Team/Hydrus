@@ -9,7 +9,6 @@ RUN echo "Installing Required Dependencies"
 RUN apt-get update && apt-get install -y\
     git\
     curl\
-    unzip\
     python3\
     python3-pip\
     ros-$ROS_DISTRO-rqt \
