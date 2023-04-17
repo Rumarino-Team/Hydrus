@@ -1,8 +1,0 @@
-prefix=/workspaces/Hydrus/jetson-tx2/catkin_ws/devel
-
-Name: nav_sensors
-Description: Description of nav_sensors
-Version: 0.0.0
-Cflags: -I/workspaces/Hydrus/jetson-tx2/catkin_ws/devel/include
-Libs: -L${prefix}/lib 
-Requires: 

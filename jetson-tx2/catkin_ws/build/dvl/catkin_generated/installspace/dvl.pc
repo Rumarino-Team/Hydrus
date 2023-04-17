@@ -1,8 +1,0 @@
-prefix=/workspaces/Hydrus/jetson-tx2/catkin_ws/install
-
-Name: dvl
-Description: Description of dvl
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
