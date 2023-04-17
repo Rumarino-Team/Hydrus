@@ -31,7 +31,8 @@ COPY ./ros_entrypoint.sh /
 CMD ["bash"]
 ENTRYPOINT ["/ros_entrypoint.sh"]
 RUN mkdir -p /opt/catkin_ws/src
-WORKDIR /opt/catkin_ws
+ENV CATKIN_WS /opt/catkin_ws
+WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
 # RUN apt update 
 # RUN pip install -U rosdep 
@@ -39,14 +40,33 @@ RUN . /opt/ros/noetic/setup.sh && catkin_make
 # RUN rosdep update
 
 RUN echo "Cloning Software Packages"
-WORKDIR /opt/catkin_ws
+WORKDIR ${CATKIN_WS}
 RUN cd ./src 
 RUN git clone --recursive https://github.com/Rumarino-Team/hydrus
 RUN cd ./src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/src/Wayfinder && pip3 install .
 
-WORKDIR /opt/catkin_ws
+WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
 RUN apt update 
 RUN pip install -U rosdep 
 RUN rosdep init 
 RUN rosdep update
+
+
+
+#Installing Arduino-CLI:
+
+RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh -s 0.17.0
+
+# Build ROS Serial
+RUN . /opt/ros/noetic/setup.sh && catkin_make \
+  cd $CATKIN_WS/src &&\
+  git clone https://github.com/ros-drivers/rosserial.git &&\
+  cd $CATKIN_WS &&\
+  catkin_make &&\
+  catkin_make install
+
+# Create ROS Serial Arduino builder
+RUN . /opt/ros/noetic/setup.sh && catkin_make \
+  cd /tmp &&\
+  rosrun rosserial_arduino make_libraries.py .
