@@ -42,15 +42,14 @@ class DVL_Wrapper:
             print(self.data.values())
             print(self.data['DVL_Data']['sys_info']['version'])
             self.dvl.disconnect()
-        # otherwise _WAYFINDER mode will be exectued 
-        else: 
-            self.dvl = WayfinderDVL()
+        else: # otherwise _WAYFINDER mode will be exectued 
+            self.dvl = WayfinderDVL() # Create instance of Teledyne RD Instruments Wayfinder Doppler Velocity Logger (DVL)
             
-        self.dvl_msg = DVL_MSG() # Create message instance, instance will be reused by node to provide information
+        self.dvl_msg = DVL_MSG() # Create a ROS message instance to store DVL messages of Wayfinder of Simulated DVL data.
         #self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size=get_param('DVL_QUEUE_SIZE')) # Create ros publisher to given arguments
-        self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size= 10) # Create ros publisher to given arguments
-        init_node(NODE_NAME, anonymous=True) # Init ros node
-        self.rate = Rate(RATE) # Set rate for ros node
+        self.pub = Publisher(TOPIC_NAME, DVL_MSG, queue_size= 10) # Instance of ROS Publisher to publish DVL information 
+        init_node(NODE_NAME, anonymous=True) # Initialize ROS node
+        self.rate = Rate(RATE) 
         self.publish()
 
 
@@ -60,7 +59,7 @@ class DVL_Wrapper:
             self._prepare_msg()
             loginfo(self.dvl_msg)
             self.pub.publish(self.dvl_msg)
-            self.rate.sleep()
+            self.rate.sleep() # Set publishing rate for DVL node
 
 
     def _get_msg_header(self):
