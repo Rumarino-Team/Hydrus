@@ -430,7 +430,7 @@ class WayfinderDVL(DVL_Component):
             vel_err_max = 1
             vel_err_min = 0.001
             percentage_err_vol = 0.005
-            vel_mean = np.mean(self._velocity)
+            vel_mean = np.mean(self.velocity)
             print("Velocity mean: \n", self.vel_mean)
 
             # self._confidence = 1 - (self.vel_mean - vel_err_min) / \
@@ -441,8 +441,10 @@ class WayfinderDVL(DVL_Component):
         
             self._binary_data_output_group['data']['velocity_error'] = output_data.vel_err
             
-            self._binary_data_output_group['data']['beams'] = np.array([output_data.range_beam1, output_data.range_beam2,
+            beams = np.array([output_data.range_beam1, output_data.range_beam2,
                                     output_data.range_beam3, output_data.range_beam4])
+            
+            self._binary_data_output_group['data']['beams'] = beams
             
             self._coordinates = output_data.COORDINATES
             self._coordinate_system = output_data.coordinate_system
@@ -459,8 +461,8 @@ class WayfinderDVL(DVL_Component):
             self._binary_data_output_group['serial_number'] = output_data.serial_number
 
             print("%9.3f %9.3f %9.3f | %9.3f | %9.3f %9.3f %9.3f %9.3f | %s" %
-                  (self._velocity[0], self._velocity[1], self._velocity[2], self._velocity_error, self._beams[0],
-                   self._beams[1], self._beams[2], self._beams[3],
+                  (velocity[0], velocity[1], velocity[2], output_data.vel_err, beams[0],
+                   beams[1], beams[2], beams[3],
                    output_data.bit_code))
             
             self._prev_time = dataTimestamp_boot_us
@@ -469,7 +471,7 @@ class WayfinderDVL(DVL_Component):
             self._logger.write('\n')
             
             print("=============================================================================================================================================\n")
-            print("PRINTING VALUES GENERATED FOR WAYFINDER DOPPLER VELOCITY LOGGER: \n")
+            print("PRINTING VALUES MEASURED FROM WAYFINDER DOPPLER VELOCITY LOGGER PING: \n")
             print("System Information = ",
                 self._binary_data_output_group['sys_info'], '\n')
             print("Velocity (in m/s) =",
