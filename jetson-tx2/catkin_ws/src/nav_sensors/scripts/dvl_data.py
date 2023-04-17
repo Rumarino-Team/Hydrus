@@ -440,8 +440,6 @@ class WayfinderDVL(DVL_Component):
                 self._binary_data_output_group['data']['velocity'], '\n')
             print("Velocity Error (in m/s) =",
                 self._binary_data_output_group['data']['velocity_error'], '\n')
-            print("Position (in m) =",
-                self._binary_data_output_group['data']['position'], '\n')
             print("Beams (in meters) = ",
                 self._binary_data_output_group['data']['beams'], '\n')
             print("Mean Range To Bottom (in meters) =",
