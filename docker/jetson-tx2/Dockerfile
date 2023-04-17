@@ -19,8 +19,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y\
     ros-$ROS_DISTRO-rqt \
     ros-$ROS_DISTRO-rqt-common-plugins \
     ros-$ROS_DISTRO-rqt-graph \
+    ros-$ROS_DISTRO-rosserial \
+    ros-$ROS_DISTRO-rosserial-arduino \
     vim \ 
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
 
 RUN echo "Setup of ROS Entrypoint"
@@ -74,21 +76,3 @@ RUN pip3 install .
 RUN echo "Sourcing catkin_ws"
 WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
-
-WORKDIR /opt
-RUN echo "Installing Arduino-CLI"
-RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh -s 0.17.0
-
-
-RUN echo "Build ROS Serial"
-WORKDIR ${CATKIN_WS}/src
-RUN . /opt/ros/noetic/setup.sh && catkin_make \
-  git clone https://github.com/ros-drivers/rosserial.git &&\
-  cd $CATKIN_WS &&\
-  catkin_make &&\
-  catkin_make install
-
-RUN echo "Creating ROS Serial Arduino builder"
-RUN . /opt/ros/noetic/setup.sh && catkin_make \
-  cd /tmp &&\
-  rosrun rosserial_arduino make_libraries.py .
