@@ -5,7 +5,7 @@ from dvl_data import WayfinderDVL, Dummy_DVL
 from time import sleep
 from rospy import Publisher, Rate, init_node, is_shutdown, Time, get_time, get_param, ROSInterruptException, loginfo
 from std_msgs.msg import Header
-from nav_sensors.msg import DVL_MSG # this import is giving problems 
+from nav_sensors.msg import DVL_MSG 
 
 DVL_PORT = '/dev/ttyUSB0' # Default port for jetson, usually USB0
 DVL_BAUDRATE = 115200 # Default value (Recommended is 9200 or 115200) (Currently not being used)
@@ -99,9 +99,9 @@ class DVL_Wrapper:
         msg.data.beams.beam2 = data['beams'][1]
         msg.data.beams.beam3 = data['beams'][2]
         msg.data.beams.beam4 = data['beams'][3]
-        msg.data.position.x = data['position'][0]
-        msg.data.position.y = data['position'][1]
-        msg.data.position.z = data['position'][2]
+        # msg.data.position.x = data['position'][0]
+        # msg.data.position.y = data['position'][1]
+        # msg.data.position.z = data['position'][2]
         msg.data.mean_bottom_range = data['mean_bottom_range']
         msg.data.speed_of_sound = data['speed_of_sound']
         msg.data.BT_status = data['BT_status']
