@@ -404,40 +404,6 @@ class WayfinderDVL(DVL_Component):
             
             print("Velocity Vector after rotation :", velocity)
             # self._logger.write("%9.3f %9.3f %9.3f, \n" % (self._velocity[0], self._velocity[1], self._velocity[2]))
-
-            # determine delta time
-            delta_time = int(dataTimestamp_boot_us - self._prev_time)
-            if self._prev_time == 0:
-                delta_time = 0
-            self._logger.write('%9d, ' % delta_time)
-            if delta_time < 0:
-                self._logger.write("\n")
-                return
-            
-            # determine delta angle
-            # angle_delta = self.curr_attitude - self._prev_pose[0:3]
-            # self.logger.write("%9.3f %9.3f %9.3f, " % (angle_delta[0], angle_delta[1], \
-            #     angle_delta[2]))
-            #print('Angle Delta: ' ,angle_delta)
-
-            # determine position delta
-            #position_delta = self.velocity * delta_time * 1e-6
-            #self._logger.write("%9.3f %9.3f %9.3f, " % (self.velocity[0], self.velocity[1], self.velocity[2]))
-            #print('Position Delta: ', position_delta)
-            #self._binary_data_output_group['data']['position'] = self._velocity
-            
-            # determining confidence level of velocity error measurement:
-            vel_err_max = 1
-            vel_err_min = 0.001
-            percentage_err_vol = 0.005
-            vel_mean = np.mean(self.velocity)
-            print("Velocity mean: \n", self.vel_mean)
-
-            # self._confidence = 1 - (self.vel_mean - vel_err_min) / \
-            #     (vel_err_max - vel_err_min)
-            confidence = 1 - (vel_mean - vel_err_min) / \
-                (vel_err_max - vel_err_min) * percentage_err_vol
-
         
             self._binary_data_output_group['data']['velocity_error'] = output_data.vel_err
             
@@ -446,18 +412,14 @@ class WayfinderDVL(DVL_Component):
             
             self._binary_data_output_group['data']['beams'] = beams
             
-            self._coordinates = output_data.COORDINATES
-            self._coordinate_system = output_data.coordinate_system
-            
             self._binary_data_output_group['data']['mean_bottom_range'] = output_data.mean_range
-            
             self._binary_data_output_group['data']['speed_of_sound'] = output_data.speed_of_sound
-            
+            self._binary_data_output_group['data']['bit_code'] = output_data.bit_code
+
             self._binary_data_output_group['power_info'] = {}
             self._binary_data_output_group['power_info']['input_voltage'] = output_data.voltage
             self._binary_data_output_group['power_info']['transmit_voltage'] = output_data.transmit_voltage
             self._binary_data_output_group['power_info']['transmit_current'] = output_data.current 
-            
             self._binary_data_output_group['serial_number'] = output_data.serial_number
 
             print("%9.3f %9.3f %9.3f | %9.3f | %9.3f %9.3f %9.3f %9.3f | %s" %
