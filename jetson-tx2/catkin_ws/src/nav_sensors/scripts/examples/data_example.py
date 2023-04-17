@@ -13,13 +13,7 @@ def update_data(output_data: OutputData, obj):
         time = output_data.get_date_time()
         txt = time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         print("Got data {0}".format(txt))
-        # if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
-        #     math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
-        #     return
-            #log NaN velocities 
-        # if output_data.is_velocity_valid():
-        #velocities = np.array([output_data.vel_x, output_data.vel_y, output_data.vel_z])
-        velocities = [output_data.vel_x, output_data.vel_y, output_data.vel_z]
+        velocities = np.array([output_data.vel_x, output_data.vel_y, output_data.vel_z])
         print("velocities :" , velocities)
         beams = np.array([output_data.range_beam1, output_data.range_beam2, output_data.range_beam3, output_data.range_beam4])
         print("beams" , beams)
@@ -71,7 +65,7 @@ if __name__ == "__main__":
                 print("Failed to start pinging")
 
             # Blocking call to wait for key pressed to end program
-            KEY = input("Press Enter to stop\n")
+            KEY = input("Press Enter to stop\n") 
 
         else:
             print("Failed to open {0} - make sure it is not used by any other program".format(PORT))

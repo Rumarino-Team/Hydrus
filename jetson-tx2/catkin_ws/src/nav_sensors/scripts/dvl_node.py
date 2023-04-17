@@ -82,15 +82,8 @@ class DVL_Wrapper:
 
 
         msg.header = self._get_msg_header() # Sets messageheader to message
-        # msg.system_info.packet_count = sys_info['packet_count']
-        # msg.system_info.packet_id = sys_info['packet_id']
-        # msg.system_info.version = sys_info['version']
-        # msg.system_info.system_type = sys_info['system_type']
-        # msg.system_info.system_subtype = sys_info['system_subtype']
-        # msg.system_info.fw_major_version = sys_info['fw_major_version']
-        # msg.system_info.fw_minor_version = sys_info['fw_minor_version']
-        # msg.system_info.fw_patch_version = sys_info['fw_patch_version']
-        # msg.system_info.fw_build_version = sys_info['fw_build_version']
+
+
         # msg.system_info.year = sys_info['year']
         # msg.system_info.month = sys_info['month']
         # msg.system_info.day = sys_info['day']

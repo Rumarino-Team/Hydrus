@@ -47,12 +47,13 @@ RUN echo "Updating ROS Dependencies"
 RUN rosdep update
 
 
-RUN echo "Cloning optional add-on software packages for Hydrus"
+RUN echo "Cloning optional add-on software packages for the Computer System of Hydrus"
 WORKDIR ${CATKIN_WS}/src
 RUN git clone --recursive https://github.com/Rumarino-Team/hydrus
+#RUN git clone https://github.com/Rumarino-Team/hydrus
 
 
-RUN echo "Sourcing catkin_ws"
+RUN echo "Sourcing Cagit clone --recursive https://github.com/Rumarino-Team/hydrustkin Workspace"
 WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
 
@@ -66,7 +67,7 @@ WORKDIR ${CATKIN_WS}/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/src/Wayfind
 RUN pip3 install .
 
 
-RUN echo "Sourcing catkin_ws"
+RUN echo "Sourcing Catkin Workspace"
 WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
 
