@@ -27,8 +27,6 @@ from time import sleep
 from io import FileIO  # For log files
 
 
-
-
 _SIM = 0
 _WAYFINDER = 1
 _MODE = _WAYFINDER
@@ -36,36 +34,36 @@ _NODE_NAME = 'dvl_driver'
 _TOPIC_NAME = '/hydrus/dvl'
 _TRANSMISSION_RATE = 10
 _QUEUE_SIZE = 10
-
+_FRAME_ID = 'dvl_frame'
 
 # MACROS for Path to be used to determine the name of the logger file to be created based on the current
 # log files inside the directory
-PREV_LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs'
-PREV_LOGGER_PREF = "dvl_log_attempts.txt"
-PREV_OS_PATH = os.path.join(PREV_LOGGER_DIR, PREV_LOGGER_PREF)
+_PREV_LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs'
+_PREV_LOGGER_PREF = "dvl_log_attempts.txt"
+_PREV_OS_PATH = os.path.join(_PREV_LOGGER_DIR, _PREV_LOGGER_PREF)
 
 # MACROS for Path to be used as the log file for the dvl
-LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs'
-LOGGER_NUM_FORMAT = "%06d.log"
-WRITE_COMMAND = 'w'
-READ_COMMAND = 'r'
+_LOGGER_DIR = '/opt/catkin_ws/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/logs'
+_LOGGER_NUM_FORMAT = "%06d.log"
+_WRITE_COMMAND = 'w'
+_READ_COMMAND = 'r'
 
-print(PREV_OS_PATH)
+print(_PREV_OS_PATH)
 
 # MACROS (M) for WAYFINDER (DVL) Macros Declarations
 
-WAYFINDER_SW_TRIGGER = 1
-WAYFINDER_BAUDRATE = 115200
-WAYFINDER_PORT = '/dev/ttyUSB0'
-WAYFINDER_MAX_DEPTH = 20
-WAYFINDER_MAX_RANGE = 20
-WAYFINDER_PING_TIME = 1  # second ping time
+_WAYFINDER_SW_TRIGGER = 1
+_WAYFINDER_BAUDRATE = 115200
+_WAYFINDER_PORT = '/dev/ttyUSB0'
+_WAYFINDER_MAX_DEPTH = 20
+_WAYFINDER_MAX_RANGE = 20
+_WAYFINDER_PING_TIME = 1  # second ping time
 
-ROLL_ANGLE = 0
-PITCH_ANGLE = 0
-YAW_ANGLE = 45
+_ROLL_ANGLE = 0
+_PITCH_ANGLE = 0
+_YAW_ANGLE = 45
 
-START_TIME = 0
+_START_TIME = 0
 
 # MACROS for generated Wayfinder(DVL) Binary Data Output Group
 MIN = 0
@@ -81,10 +79,10 @@ ROUND_DELIMETER = 3
 
 
 class WayfinderNode():
-    """Help on package RUMarino 
+    """Help on ROS Python Executable Node Class for Teledyne's Marine RDI Wayfinder Doppler Velocity Logger (DVL) 
 
     NAME 
-        DVL_Component
+        WayfinderNode
 
     DESCRIPTION
 
@@ -125,10 +123,10 @@ class WayfinderNode():
 
         self._logger: FileIO
         self._log_file_counter: int
-        self._ROLL: np.radians = np.radians(ROLL_ANGLE)
-        self._PITCH: np.radians = np.radians(PITCH_ANGLE)  # y ->
-        self._YAW: np.radians = np.radians(YAW_ANGLE)  # z ->
-        self._prev_time: int = START_TIME
+        self._ROLL: np.radians = np.radians(_ROLL_ANGLE)
+        self._PITCH: np.radians = np.radians(_PITCH_ANGLE)  # y ->
+        self._YAW: np.radians = np.radians(_YAW_ANGLE)  # z ->
+        self._prev_time: int = _START_TIME
 
     def setup_logger(self):
         """Configures the data logging
@@ -137,7 +135,7 @@ class WayfinderNode():
 
         try:
             # open prev log file to view the current log_num
-            with open(PREV_OS_PATH, READ_COMMAND) as prev_log:
+            with open(_PREV_OS_PATH, _READ_COMMAND) as prev_log:
                 # extract log_num
                 self._log_file_counter = int(prev_log.readline()) + 1
         except Exception:
@@ -145,12 +143,12 @@ class WayfinderNode():
             self._log_file_counter = 0
 
         # Update log_num
-        with open(PREV_OS_PATH, WRITE_COMMAND) as lastLog:
+        with open(_PREV_OS_PATH, _WRITE_COMMAND) as lastLog:
             lastLog.write("%d\n" % self._log_file_counter)
 
         # Create logger
         self._logger = open(os.path.join(
-            LOGGER_DIR, LOGGER_NUM_FORMAT % self._log_file_counter), WRITE_COMMAND)
+            _LOGGER_DIR, _LOGGER_NUM_FORMAT % self._log_file_counter), _WRITE_COMMAND)
 
     def setup_transposition_matrix(self):
         """
@@ -195,46 +193,53 @@ class WayfinderNode():
 
         # Use the connect method of the wayfinder to create a connection with the sensor at given port and baudrate:
         # If the wayfinder is not not connected,
-        while not self.wayfinder.connect(WAYFINDER_PORT, WAYFINDER_BAUDRATE):
-            self._logger.write("Error connecting \n")  # Log a connection error
+        while not self.wayfinder.connect(_WAYFINDER_PORT, _WAYFINDER_BAUDRATE):
+            rospy.logerr("Error connecting to Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)")
+            self._logger.write("Error connecting to Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")  # Log a connection error
 
+        rospy.loginfo("Succesfully Connected to Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)")
         # Otherwise, log that the connection was succesful
-        self._logger.write("Connection Succesful \n")
+        self._logger.write("Succesfully Connected to Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")
 
         if self.wayfinder.reset_to_defaults():  # reset sensor to default factory settings
             self._logger.write("DVL is reset to default factory settings \n")
         else:
+            rospy.logerr("Failed to reset Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) to default factory settings ")
             self._logger.write(
-                "Failed to reset Wayfinder to default factory settings \n")
+                "Failed to reset Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) to default factory settings \n")
 
         # Use the get_setup() method of the Wayfinder wrapper to get user system setup and calibrate
         # the sensor to any oceanic environment.
         if not self.wayfinder.get_setup():  # If the wayfinder cannot get the setup of the system,
+            rospy.logerr("Failed to get system setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) ")
             # log a System Setup Error
-            self._logger.write("Failed to get DVL System setup \n")
+            self._logger.write("Failed to get system setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")
         else:  # otherwise
 
             # Modify system setup structure:
 
             SETUP = self.wayfinder.system_setup  # declare the object for the sensor
 
+            rospy.logerr("System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) before calibration: %s " % (SETUP))
+
             # log the system setup before calibration
             self._logger.write('Setup Before Calibration %s \n' % SETUP)
 
-            rospy.loginfo(
-                'Setting and Extracting calibration values from Wayfinder System Setup:')
-
-            SETUP.software_trigger = WAYFINDER_SW_TRIGGER  # Set software trigger flag
-            SETUP.max_depth = WAYFINDER_MAX_DEPTH  # Set maximum tracking depth in meters
+            # Set software trigger flag
+            SETUP.software_trigger = _WAYFINDER_SW_TRIGGER
+            # Set maximum tracking depth in meters
+            SETUP.max_depth = _WAYFINDER_MAX_DEPTH
             # Set maximum vertical beam range in meters
-            SETUP.max_vb_range = WAYFINDER_MAX_RANGE
+            SETUP.max_vb_range = _WAYFINDER_MAX_RANGE
 
             # extract software trigger information (0-disabled, 1-enabled)
-            msg.sys_info.sw_trigger = SETUP.software_trigger
+            msg.setup.sw_trigger = SETUP.software_trigger
             # extract maximum tracking depth information (in meters)
-            msg.sys_info.max_depth = SETUP.max_depth
+            msg.setup.max_depth = SETUP.max_depth
             # extract maximum vertical beam range information (in meters)
-            msg.sys_info.max_track_range = SETUP.max_vb_range
+            msg.setup.max_track_range = SETUP.max_vb_range
+
+            rospy.logerr("System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) before calibration: %s " % (SETUP))
 
             # log system setup after calibration
             self._logger.write('Setup After Calibration %s \n' % SETUP)
@@ -250,26 +255,28 @@ class WayfinderNode():
                 self.wayfinder.register_ondata_callback(self.data_cb, None)
 
                 if not self.wayfinder.exit_command_mode():
-                    self._logger.write("Failed to exit comamnd mode \n")
+                    rospy.logerr("Failed to exit the command mode of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) ")
+                    self._logger.write("Failed to exit the command mode of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")
 
-                self._logger.write("Entering Command Mode \n")
+                rospy.loginfo('Entering the command mode of the Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)')
+                self._logger.write("Entering the command mode of the Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")
 
                 self.wayfinder.get_tests()  # achieve initial tests for the Wayfinder DVL
                 # log Wayfinder interfal system tests
                 self._logger.write('Sensor Tests: %s \n' %
                                    self.wayfinder.system_tests.tests)
 
-                onesecond = dt.datetime.now() + dt.timedelta(seconds=WAYFINDER_PING_TIME)
+                onesecond = dt.datetime.now() + dt.timedelta(seconds=_WAYFINDER_PING_TIME)
                 target_time = dt.datetime(onesecond.year, onesecond.month, onesecond.day,
                                           onesecond.hour, onesecond.minute, onesecond.second)
 
                 current_time = dt.datetime.now()
 
                 delta_time = target_time - current_time
-
-                self._logger.write('%s: \n' % delta_time)
+                rospy.loginfo('Delta Time: %s' %(delta_time))
                 sleep((delta_time).total_seconds())
 
+                # Set time of Teledyne Wayfinder DVL to Real-Time Clock (RTC)
                 self.wayfinder.set_time(dt.datetime.now())  # set time
 
     def data_cb(self, output_data: OutputData, *args):
@@ -291,24 +298,36 @@ class WayfinderNode():
             self._logger.write("DVL TimeStamp {0}\n".format(txt))
             print('DVL Time (from examples): ', time)
 
+            # Conditional statement that checks for Not A Number (NaN) velocities inside the Teledyne Wayfinder DVL
             if math.isnan(output_data.vel_x) or math.isnan(output_data.vel_y) or \
                     math.isnan(output_data.vel_z) or math.isnan(output_data.vel_err):
-                self._logger.write("NaN velocities\n")
+                rospy.logwarn('The Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) -XYZ velocity measurements are Not a Number (NaN) ')
+                self._logger.write("The Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) -XYZ velocity measurements are Not a Number (NaN) '\n")
                 return
 
-            if output_data.is_velocity_valid():
+            # Conditional statement that checks for valid velocities inside the Teledyne Wayfinder DVL
+            if output_data.is_velocity_valid():  # If the velocities are valid
+
+                # Extract Wayfinder DVL XYZ velocity measurements and store it using an np.array
                 velocity = np.array(
                     [output_data.vel_x, output_data.vel_y, output_data.vel_z])
 
+                # Assign Teledyne Wayfinder DVL velocity measurements to custom ROS DVL message
+                # assign velocity-x measurement
                 msg.data.velocity.x = velocity[0]
+                # assign velocity-y measurement
                 msg.data.velocity.y = velocity[1]
+                # assign velocity-z measurement
                 msg.data.velocity.z = velocity[2]
 
+                # Log velocity values locally
                 self._logger.write("%9.3f %9.3f %9.3f, \n" %
                                    (velocity[0], velocity[1], velocity[2]))
-            else:
-                rospy.loginfo('Invalid Velocities')
-                self._logger.write("Invalid velocities\n")
+            else:  # Otherwise
+                # Log 'Invalid Velocity' message to rosconsle
+                rospy.logwarn('The Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) -XYZ velocity measurements are invalid ')
+                # Log 'Invalid Velocities' message locally
+                self._logger.write('The Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) -XYZ velocity measurements are invalid \n')
                 return
 
             # Matrix multiplication
@@ -317,43 +336,58 @@ class WayfinderNode():
 
             print("Velocity Vector after rotation :", velocity)
             # rospy.loginfo('Wayfinder Velocities: %9.3f %9.3f %9.3f' % ((velocity[0], velocity[1], velocity[2])))
+
+            # Log velocity values locally
             self._logger.write("%9.3f %9.3f %9.3f, \n" %
                                (velocity[0], velocity[1], velocity[2]))
 
+            # Assign Teledyne Wayfinder DVL velocity error to custom ROS DVL message
             msg.data.vel_error = output_data.vel_err  # extract velocity error
 
-            if output_data.is_range_valid():
+            # Conditional statement that checks if the range to bottom is valid inside the Teledyne Wayfinder DVL
+            if output_data.is_range_valid():  # If the range to bottom is valid:
 
+                # Extract Wayfinder DVL 3-Beam solution measurements and store it using an np.array
                 beams = np.array([output_data.range_beam1, output_data.range_beam2,
                                  output_data.range_beam3, output_data.range_beam4])
 
+                # Assign Teledyne Wayfinder DVL 3-Beam solution measurements to custom ROS DVL message
                 msg.data.beams.beam1 = beams[0]  # extract beam1 information
                 msg.data.beams.beam2 = beams[1]  # extract beam2 information
                 msg.data.beams.beam3 = beams[2]  # extract beam3 information
                 msg.data.beams.beam4 = beams[3]  # extract beam4 information
 
+                # Log Teledyne Wayfinder DVL 3-Beam solution measurements locally
                 self._logger.write("%9.3f %9.3f %9.3f %9.3f, \n" % (
                     beams[0], beams[1], beams[2], beams[3]))
 
-                # extract mean bottom range information
+                # Extract Teledyne Wayfinder DVL mean bottom range measurements to custom ROS DVL message
                 msg.data.mean_bottom_range = output_data.mean_range
+
+                # Log Teledyne Wayfinder DVL mean bottom range measurements locally
                 self._logger.write("%9.3f, \n" % (output_data.mean_range))
 
-            else:
-                rospy.loginfo("Invalid Range to Bottom Values for Wayfinder")
-                self._logger.write("Invalid Range to Bottom Values \n")
+            else:  # Otherwise
+                # Log 'Invalid Range to Bottom Measurements' message to rosconsle
+                rospy.logwarn(
+                    "Invalid Range to Bottom Measurements for Wayfinder")
+                # Log 'Invalid Range to Bottom Measurements' message locally
+                self._logger.write("Invalid Range to Bottom Measurements \n")
                 return
 
-            # extract speed of sound information
+            # extract speed of sound information from Wayfinder DVL to ROS DVL MSG
             msg.data.speed_of_sound = output_data.speed_of_sound
-
-            # extract input voltage information
+            
+            rospy.logdebug('Extracting Power Information from Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)')
+            # extract input voltage information from Wayfinder DVL to ROS DVL MSG
             msg.power.input_voltage = output_data.voltage
-            # extract transmit voltage information
+            # extract transmit voltage information from Wayfinder DVL to ROS DVL MSG
             msg.power.transmit_voltage = output_data.transmit_voltage
-            # extract transmit current information
+            # extract transmit current information from Wayfinder DVL to ROS DVL MSG
             msg.power.transmit_current = output_data.current
+            rospy.logdebug('Succesfully extracted Power Information from Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)')
 
+            # extract serial number from Wayfinder DVL to ROS DVL MSG
             msg.serial_numer = output_data.serial_number
 
             print("%9.3f %9.3f %9.3f | %9.3f | %9.3f %9.3f %9.3f %9.3f | %s" %
@@ -361,8 +395,9 @@ class WayfinderNode():
                    beams[1], beams[2], beams[3],
                    output_data.bit_code))
 
-            self._prev_time = dataTimestamp_boot_us
-            self._logger.write('\n')
+            self._prev_time = dataTimestamp_boot_us  # assign previous time
+
+            self._logger.write('\n')  # end of data measurement
 
         except Exception as e:
             print(e)
@@ -375,22 +410,27 @@ class WayfinderNode():
         """ TODO: DOCUMENT"""
         while not rospy.is_shutdown():
             # delay execution of the dvl ping by a second
-            sleep(WAYFINDER_PING_TIME)
+            sleep(_WAYFINDER_PING_TIME)
             # execute a software trigger that will make the Wayfinder ping
             if not self.wayfinder.send_software_trigger():
+                rospy.logwarn("Failed to send software trigger to Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)")
                 # log software trigger error
-                self._logger.write("Failed to send software trigger \n")
-            self.dvl_msg.header = self._get_msg_header()  # Sets message header to message
-            rospy.loginfo(self.dvl_msg)
+                self._logger.write("Failed to send software trigger to Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")
+            self.dvl_msg.header = self._set_msg_header()  # Sets message header to message
+            rospy.loginfo('Publishing Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) Message')
             self.pub.publish(self.dvl_msg)
+            rospy.loginfo('Logging Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) Message: %s' % (self.dvl_msg))
             self.rate.sleep()  # Set publishing rate for DVL node
 
-    def _get_msg_header(self):
+    def _set_msg_header(self):
         """ TODO: DOCUMENT"""
 
+        # Create ROS Header Message
         msg_header = Header()
+        # Assign current ROS time to ROS Header timestamp
         msg_header.stamp = rospy.Time.now()
-        msg_header.frame_id = 'dvl_frame'
+        # Assgin Frame ID to Header message
+        msg_header.frame_id = _FRAME_ID
         return msg_header
 
 
