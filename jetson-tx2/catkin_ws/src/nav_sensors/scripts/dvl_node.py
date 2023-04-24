@@ -220,7 +220,7 @@ class WayfinderNode():
 
             SETUP = self.wayfinder.system_setup  # declare the object for the sensor
 
-            rospy.logerr("System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) before calibration: %s " % (SETUP))
+            rospy.loginfo("System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) before calibration: %s " % (SETUP))
 
             # log the system setup before calibration
             self._logger.write('Setup Before Calibration %s \n' % SETUP)
@@ -239,20 +239,23 @@ class WayfinderNode():
             # extract maximum vertical beam range information (in meters)
             msg.setup.max_track_range = SETUP.max_vb_range
 
-            rospy.logerr("System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) before calibration: %s " % (SETUP))
+            rospy.loginfo("System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) after calibration: %s " % (SETUP))
 
             # log system setup after calibration
-            self._logger.write('Setup After Calibration %s \n' % SETUP)
+            self._logger.write('System setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) after calibration: %s \n' % SETUP)
 
             # Setup new calibration settings
             # if the setup cannot be set,
             if not self.wayfinder.set_setup(SETUP):
-                # log a system setup error
-                self._logger.write("Failed to set system setup \n")
+                # log a system setup error to rosconsole
+                rospy.loginfo("Failed system setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)")
+                # log a system setup error to log file
+                self._logger.write("Failed system setup of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) \n")
             else:  # otherwise
 
+                rospy.loginfo("Registering ondata callback function for Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL)")
                 # register callback function to be exectuted
-                self.wayfinder.register_ondata_callback(self.data_cb, None)
+                self.wayfinder.register_ondata_callback(self.binary_data_output_group_cb, None)
 
                 if not self.wayfinder.exit_command_mode():
                     rospy.logerr("Failed to exit the command mode of Teledyne Marine RDI Wayfinder Doppler Velocity Logger (DVL) ")
@@ -279,8 +282,8 @@ class WayfinderNode():
                 # Set time of Teledyne Wayfinder DVL to Real-Time Clock (RTC)
                 self.wayfinder.set_time(dt.datetime.now())  # set time
 
-    def data_cb(self, output_data: OutputData, *args):
-        """Callback function that will be called each ping to extract the Binary Data Output Group of the DVL"""
+    def binary_data_output_group_cb(self, output_data: OutputData, *args):
+        """Callback function to be called each ping to extract the Binary Data Output Group of the DVL"""
         try:
             msg = self.dvl_msg
 
