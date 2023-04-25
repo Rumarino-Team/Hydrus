@@ -54,7 +54,6 @@ RUN rosdep update
 RUN echo "Cloning optional add-on software packages for the Computer System of Hydrus"
 WORKDIR ${CATKIN_WS}/src
 RUN git clone --recursive https://github.com/Rumarino-Team/hydrus
-#RUN git clone https://github.com/Rumarino-Team/hydrus
 
 
 RUN echo "Sourcing Cagit clone --recursive https://github.com/Rumarino-Team/hydrustkin Workspace"
@@ -76,7 +75,7 @@ WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
 
 
-RUN echo "Setup of ROS Entrypoint"
+RUN echo "Setup of ROS Entrypoint for Jetson Container"
 RUN rm -rf /ros_entrypoint.sh
 COPY ./ros_entrypoint.sh /
 CMD ["bash"]

@@ -5,6 +5,12 @@
 
 <launch>
 
+  <!-- Load the dvl.yaml file that holds the ROS parameters of the Teledyne Marine RDI Doppler Velocity Logger (DVL) 
+  node and add a 'WAYFINDER' prefix to indicate the DVL type -->
+  <group ns="wayfinder">
+      <rosparam file="$(find nav_sensors)/config/dvl.yaml" />
+  </group>
+
   <!-- Launching node: -->
   <node name = "dvl_driver" pkg = "nav_sensors" type = "dvl_node.py" />
 
