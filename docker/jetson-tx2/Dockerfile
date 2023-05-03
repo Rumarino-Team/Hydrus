@@ -70,6 +70,14 @@ WORKDIR ${CATKIN_WS}/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/src/Wayfind
 RUN pip3 install .
 
 
+RUN echo "Installing VN Programming Library for VectorNav VN100 Inertial Measurement Unit (IMU)"
+WORKDIR ${CATKIN_WS}/src/hydrus/jetson-tx2/catkin_ws
+RUN . /opt/ros/noetic/setup.sh && catkin_make 
+
+
+WORKDIR ${CATKIN_WS}/src/hydrus/jetson-tx2/catkin_ws/src/nav_sensors/src/VN100/vnproglib/python
+RUN pip3 install .
+
 RUN echo "Sourcing Catkin Workspace"
 WORKDIR ${CATKIN_WS}
 RUN . /opt/ros/noetic/setup.sh && catkin_make 
