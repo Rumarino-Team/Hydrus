@@ -10,14 +10,13 @@ __vn100_baud_rate = 115200
 
 
 vn100 = EzAsyncData.connect(__vn100_path, __vn100_baud_rate)
-print('Initialized')
 
 
 def talker():
-    pub_y = rospy.Publisher('/hydrus/IMU/align_current', Float32, queue_size=10)
-    pub_p = rospy.Publisher('/hydrus/IMU/pitch_current', Float32, queue_size=10)
-    pub_r = rospy.Publisher('/hydrus/IMU/roll_current', Float32, queue_size=10)
-    rospy.init_node('vn100')
+    pub_y = rospy.Publisher('/hydrus/IMU/yaw', Float32, queue_size=10)
+    pub_p = rospy.Publisher('/hydrus/IMU/pitch', Float32, queue_size=10)
+    pub_r = rospy.Publisher('/hydrus/IMU/roll', Float32, queue_size=10)
+    rospy.init_node('imu_driver')
     rate = rospy.Rate(10) # 10hz
 
     while not rospy.is_shutdown():
@@ -34,10 +33,9 @@ def talker():
         pub_y.publish(value_x)
         pub_p.publish(value_y)
         pub_r.publish(value_z)
+        
         rate.sleep()
 
-
-print (__name__)
 
 if __name__ == '__main__':
     try:
